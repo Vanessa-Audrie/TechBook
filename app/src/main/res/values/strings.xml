@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Project_Pemob_Techie</string>
+    <string name="title_home">Home</string>
+    <string name="title_wishlist">Wishlist</string>
+    <string name="title_history">History</string>
+    <string name="title_account">Account</string>
+</resources>
