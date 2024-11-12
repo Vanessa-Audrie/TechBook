@@ -8,7 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_pemob_techie.R
 
-class RecAdapter(private val recommendations: List<DisplayData>) :
+import android.util.Base64
+import android.graphics.BitmapFactory
+
+class RecAdapter(private val recommendations: List<BookResponse>) :
     RecyclerView.Adapter<RecAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -25,11 +28,15 @@ class RecAdapter(private val recommendations: List<DisplayData>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val recommendation = recommendations[position]
-        holder.title.text = recommendation.title
+        holder.title.text = recommendation.book_title
         holder.price.text = "Rp ${recommendation.price}"
-        holder.image.setImageBitmap(recommendation.image)  // Set the Bitmap image
+
+        val imageBytes = Base64.decode(recommendation.image_base64, Base64.DEFAULT)
+        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        holder.image.setImageBitmap(bitmap)
     }
 
-    override fun getItemCount(): Int = recommendations.size
+    override fun getItemCount(): Int {
+        return recommendations.size
+    }
 }
-
