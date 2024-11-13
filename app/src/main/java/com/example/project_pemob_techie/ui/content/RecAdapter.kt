@@ -1,5 +1,6 @@
 package com.example.project_pemob_techie.ui.content
 
+import android.content.Intent
 import android.util.Base64
 import android.graphics.BitmapFactory
 import android.util.Log
@@ -25,8 +26,33 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.viewholder_recom_list, parent, false)
+
+        view.setOnClickListener { v ->
+            val position = (v.tag as? ViewHolder)?.adapterPosition
+            if (position != null && position != RecyclerView.NO_POSITION) {
+                val recommendation = recommendations[position]
+                val context = v.context
+                val intent = Intent(context, BookDetails::class.java).apply {
+                    putExtra("BOOK_TITLE", recommendation.book_title)
+                    putExtra("BOOK_PRICE", recommendation.price)
+                    putExtra("BOOK_IMAGE", recommendation.book_img)
+                    putExtra("BOOK_SYNOPSIS", recommendation.synopsis)
+                    putExtra("BOOK_ISBN", recommendation.isbn)
+                    putExtra("BOOK_AUTHOR", recommendation.author)
+                    putExtra("BOOK_LANG", recommendation.language)
+                    putExtra("BOOK_PAGES", recommendation.number_of_pages)
+                    putExtra("BOOK_DATE", recommendation.published_date)
+                    putExtra("BOOK_MASS", recommendation.mass)
+                    putExtra("BOOK_PUBLISHER", recommendation.publisher)
+
+                }
+                context.startActivity(intent)
+            }
+        }
+
         return ViewHolder(view)
     }
+
 
     fun hexStringToByteArray(hexString: String): ByteArray {
         val result = ByteArray(hexString.length / 2)
