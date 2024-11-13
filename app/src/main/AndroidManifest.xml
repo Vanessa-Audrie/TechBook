@@ -34,10 +34,17 @@
             android:name=".ui.login.LoginSignup"
             android:exported="true"
             android:theme="@style/Theme.Project_Pemob_Techie.FullScreen" />
+
+
+        <activity android:name=".ui.content.BookDetails"
+            android:exported="true"
+            android:theme="@style/Theme.Project_Pemob_Techie.FullScreen"/>
         <activity
             android:name=".ui.content.Home"
             android:exported="true"
             android:theme="@style/Theme.Project_Pemob_Techie.FullScreen" />
+
+
         <activity
             android:name=".ui.splashscreen.SplashScreen"
             android:exported="true"
