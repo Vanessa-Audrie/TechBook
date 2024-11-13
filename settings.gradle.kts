@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Project_Pemob_Techie"
 include(":app")
+

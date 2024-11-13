@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
+    <!-- Allow cleartext traffic for local network (192.168.1.15) -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">192.168.1.15</domain>
+    </domain-config>
 
+    <!-- Ensure Firebase connections over HTTPS are allowed -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">firebaseio.com</domain>
     </domain-config>
 </network-security-config>
