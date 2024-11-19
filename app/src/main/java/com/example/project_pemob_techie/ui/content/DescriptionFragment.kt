@@ -2,6 +2,7 @@
 
 
     import android.os.Bundle
+    import android.util.Log
     import android.view.LayoutInflater
     import android.view.View
     import android.view.ViewGroup
@@ -14,7 +15,6 @@
         companion object {
             private const val ARG_SYNOPSIS = "synopsis"
 
-            // Factory method to create a new instance of this fragment
             fun newInstance(synopsis: String): DescriptionFragment {
                 val fragment = DescriptionFragment()
                 val args = Bundle()
@@ -29,10 +29,13 @@
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
 
-            // Retrieve the synopsis from arguments
             synopsis = arguments?.getString(ARG_SYNOPSIS)
+            Log.d("DescriptionFragment", "Received synopsis: $synopsis") // This should show up in logcat
 
-            // Display the synopsis in a TextView or however you'd like
+            if (synopsis.isNullOrEmpty()) {
+                synopsis = "No synopsis available."
+            }
+
             val synopsisTextView: TextView = view.findViewById(R.id.synopsisTextView)
             synopsisTextView.text = synopsis
         }

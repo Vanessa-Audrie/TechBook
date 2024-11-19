@@ -1,16 +1,16 @@
 package com.example.project_pemob_techie.ui.content
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_pemob_techie.R
-import com.google.firebase.database.*
 import com.example.project_pemob_techie.ui.content.BookResponse
+import com.example.project_pemob_techie.ui.content.ImageCacheHelper
 import com.example.project_pemob_techie.ui.content.RecAdapter
+import com.google.firebase.database.*
 
-class Home: AppCompatActivity() {
+class Home : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var database: DatabaseReference
@@ -28,11 +28,16 @@ class Home: AppCompatActivity() {
         database.limitToFirst(10).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val recommendations = mutableListOf<BookResponse>()
+
+                // Iterate through the snapshot and populate the recommendations list
                 for (dataSnapshot in snapshot.children) {
                     val book = dataSnapshot.getValue(BookResponse::class.java)
-                    book?.let { recommendations.add(it) }  // Add the book to the list if it's not null
+                    book?.let {
+                        recommendations.add(it)
+                    }
                 }
 
+                // Update the RecyclerView with the populated recommendations list
                 recyclerView.adapter = RecAdapter(recommendations)
             }
 
@@ -40,5 +45,6 @@ class Home: AppCompatActivity() {
                 error.toException().printStackTrace()
             }
         })
+
     }
 }

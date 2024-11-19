@@ -55,6 +55,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.mysql.connector.java)
+    implementation("io.coil-kt:coil:2.3.0")
+    implementation("io.coil-kt:coil-base:2.3.0")
     implementation("com.github.bumptech.glide:glide:4.15.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.0")
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
