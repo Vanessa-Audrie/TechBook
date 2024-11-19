@@ -22,14 +22,13 @@ class Home : AppCompatActivity() {
         recyclerView = findViewById(R.id.viewRecom)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
-        val database = FirebaseDatabase.getInstance("https://techbook-techie-20954-default-rtdb.firebaseio.com/")
+        val database = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
             .getReference("2/data/")
 
         database.limitToFirst(10).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val recommendations = mutableListOf<BookResponse>()
 
-                // Iterate through the snapshot and populate the recommendations list
                 for (dataSnapshot in snapshot.children) {
                     val book = dataSnapshot.getValue(BookResponse::class.java)
                     book?.let {
@@ -37,7 +36,6 @@ class Home : AppCompatActivity() {
                     }
                 }
 
-                // Update the RecyclerView with the populated recommendations list
                 recyclerView.adapter = RecAdapter(recommendations)
             }
 
