@@ -15,18 +15,15 @@ class LoginSignup : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize View Binding
         binding = ActivityLoginSignupBinding.inflate(layoutInflater)
-        setContentView(binding.root) // Use binding.root here
+        setContentView(binding.root)
 
-        // Apply window insets for system bars
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // Set click listeners
         binding.loginButton.setOnClickListener {
             startActivity(Intent(this, Login::class.java))
         }

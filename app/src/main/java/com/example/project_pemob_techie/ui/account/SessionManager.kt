@@ -13,19 +13,16 @@ object SessionManager {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
 
-    // Check if user is logged in
     fun isLoggedIn(context: Context): Boolean {
         val sharedPreferences = getSharedPreferences(context)
         return sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false)
     }
 
-    // Get the logged-in user ID
     fun getUserId(context: Context): String? {
         val sharedPreferences = getSharedPreferences(context)
         return sharedPreferences.getString(KEY_USER_ID, null)
     }
 
-    // Start the user session
     fun startSession(context: Context, userId: String) {
         val sharedPreferences = getSharedPreferences(context)
         val editor = sharedPreferences.edit()
@@ -34,7 +31,6 @@ object SessionManager {
         editor.apply()
     }
 
-    // End the user session (logout)
     fun endSession(context: Context) {
         val sharedPreferences = getSharedPreferences(context)
         val editor = sharedPreferences.edit()

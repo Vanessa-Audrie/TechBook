@@ -44,20 +44,20 @@ class Signup : AppCompatActivity() {
             val birthday = binding.birthdayInput.text.toString().trim()
             val password = binding.passwordInput.text.toString().trim()
 
-            if (validateInputs(name, username, email, phone, birthday, password)) {
+            if (validate(name, username, email, phone, birthday, password)) {
                 val hashedPassword = hashPassword(password)
-                saveUserToFirebase(name, username, email, phone, birthday, hashedPassword)
+                saveUserToDB(name, username, email, phone, birthday, hashedPassword)
             }
         }
     }
 
-    private fun validateInputs(name: String, username: String, email: String, phone: String, birthday: String, password: String): Boolean {
+    private fun validate(name: String, username: String, email: String, phone: String, birthday: String, password: String): Boolean {
         if (name.isEmpty() || username.isEmpty() || email.isEmpty() || phone.isEmpty() || birthday.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "All fields are required.", Toast.LENGTH_SHORT).show()
             return false
         }
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Invalid email.", Toast.LENGTH_SHORT).show()
             return false
         }
         if (phone.length < 10) {
@@ -71,8 +71,7 @@ class Signup : AppCompatActivity() {
         return BCrypt.withDefaults().hashToString(12, password.toCharArray())
     }
 
-    private fun saveUserToFirebase(name: String, username: String, email: String, phone: String, birthday: String, hashedPassword: String) {
-        // Create a user object
+    private fun saveUserToDB(name: String, username: String, email: String, phone: String, birthday: String, hashedPassword: String) {
         val user = User(name, username, email, phone, birthday, hashedPassword)
 
         database.child("techbook_techie").child("user").push().setValue(user)
@@ -81,7 +80,7 @@ class Signup : AppCompatActivity() {
                     Toast.makeText(this, "Signup successful!", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, Login::class.java))
                 } else {
-                    Toast.makeText(this, "Signup failed. Try again!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Signup failed. Please try again!", Toast.LENGTH_SHORT).show()
                 }
             }
     }
