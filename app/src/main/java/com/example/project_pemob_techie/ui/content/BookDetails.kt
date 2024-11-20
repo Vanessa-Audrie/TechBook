@@ -21,7 +21,6 @@ class BookDetails : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product_page)
-        val imageViewModel = ViewModelProvider(this).get(BookViewModel::class.java)
 
 
         val backButton: ImageView = findViewById(R.id.imageView29)

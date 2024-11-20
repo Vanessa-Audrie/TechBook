@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.ui.content.BookResponse
-import com.example.project_pemob_techie.ui.content.ImageCacheHelper
 import com.example.project_pemob_techie.ui.content.RecAdapter
 import com.google.firebase.database.*
 
