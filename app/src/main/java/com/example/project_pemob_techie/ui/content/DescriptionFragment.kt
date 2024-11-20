@@ -28,9 +28,8 @@
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-
             synopsis = arguments?.getString(ARG_SYNOPSIS)
-            Log.d("DescriptionFragment", "Received synopsis: $synopsis") // This should show up in logcat
+            Log.d("DescriptionFragment", "Received synopsis: $synopsis")
 
             if (synopsis.isNullOrEmpty()) {
                 synopsis = "No synopsis available."

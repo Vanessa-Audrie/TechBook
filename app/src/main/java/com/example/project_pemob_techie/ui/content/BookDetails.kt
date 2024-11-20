@@ -56,14 +56,24 @@ class BookDetails : AppCompatActivity() {
                 val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                 bookImageView.setImageBitmap(bitmap)
             } else {
-                bookImageView.setImageResource(R.drawable.error) // Fallback image if file doesn't exist
+                bookImageView.setImageResource(R.drawable.error)
             }
         }
 
         val tabLayout: TabLayout = findViewById(R.id.tabbedLayout)
         val viewPager: ViewPager2 = findViewById(R.id.viewPager)
 
-        val adapter = BookDetailsPagerAdapter(this, bookSynopsis ?: "No synopsis")
+        val bookDetails = mapOf(
+            "ISBN" to (bookISBN ?: "N/A"),
+            "Author" to (bookAuthor ?: "N/A"),
+            "Language" to (bookLanguage ?: "N/A"),
+            "Pages" to (bookPages ?: "N/A"),
+            "Date" to (bookDate ?: "N/A"),
+            "Mass" to (bookMass ?: "N/A"),
+            "Publisher" to (bookPublisher ?: "N/A")
+        )
+
+        val adapter = BookDetailsPagerAdapter(this, bookSynopsis ?: "No synopsis", bookDetails)
         viewPager.adapter = adapter
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->

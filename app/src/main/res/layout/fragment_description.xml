@@ -3,18 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp">
 
         <TextView
             android:id="@+id/synopsisTextView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_medium"
             android:text="This is the description or synopsis of the book."
             android:textColor="@color/black"
-            android:textSize="16sp"
-            tools:layout_editor_absoluteX="-7dp"
-            tools:layout_editor_absoluteY="485dp" />
+            android:textSize="13sp"
+            android:textAlignment="gravity"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="left" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
