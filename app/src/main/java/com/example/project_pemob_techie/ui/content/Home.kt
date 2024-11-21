@@ -1,7 +1,14 @@
 package com.example.project_pemob_techie.ui.content
 
+import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_pemob_techie.R
@@ -9,20 +16,30 @@ import com.example.project_pemob_techie.ui.content.BookResponse
 import com.example.project_pemob_techie.ui.content.RecAdapter
 import com.google.firebase.database.*
 
+
 class Home : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var database: DatabaseReference
+    private lateinit var searchBar: EditText
+    private val recommendations = mutableListOf<BookResponse>()
+    private val filteredList = mutableListOf<BookResponse>()
+    private lateinit var adapter: RecAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_home)
 
         recyclerView = findViewById(R.id.viewRecom)
+        searchBar = findViewById(R.id.search_bar)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
-        val database = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
-            .getReference("2/data/")
+        adapter = RecAdapter(filteredList)
+        recyclerView.adapter = adapter
+
+        val database =
+            FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
+                .getReference("2/data/")
 
         database.limitToFirst(10).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -34,7 +51,29 @@ class Home : AppCompatActivity() {
                         recommendations.add(it)
                     }
                 }
+                val searchBar = findViewById<EditText>(R.id.search_bar)
 
+                searchBar.setOnEditorActionListener { v, actionId, event ->
+                    // Cek jika yang dipilih adalah tombol Enter
+                    if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        // Ambil query yang dimasukkan oleh pengguna
+                        val query = v.text.toString().trim()
+                        Log.d("Search", "Query entered: $query")
+
+                        // Pastikan query tidak kosong
+                        if (query.isNotEmpty()) {
+                            // Pindah ke Activity_Search_Result
+                            val intent = Intent(this@Home, SearchResultActivity::class.java)
+                            intent.putExtra("SEARCH_QUERY", query)  // Kirim query ke Activity_Search_Result
+                            startActivity(intent)
+                        }
+
+                        true  // Mengindikasikan bahwa event telah ditangani
+                    } else {
+                        false  // Event tidak ditangani
+                    }
+                }
+                updateFilteredList()
                 recyclerView.adapter = RecAdapter(recommendations)
             }
 
@@ -43,5 +82,29 @@ class Home : AppCompatActivity() {
             }
         })
 
+        searchBar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateFilteredList()
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    private fun updateFilteredList() {
+        searchBar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                adapter.updateFilteredList(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 }
+
+

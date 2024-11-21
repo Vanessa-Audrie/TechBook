@@ -1,5 +1,6 @@
 package com.example.project_pemob_techie.ui.content
 
+
 data class BookResponse(
     val author: String? = null,
     val book_img: String? = null,

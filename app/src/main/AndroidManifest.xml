@@ -55,6 +55,10 @@
             android:name=".ui.content.Home"
             android:exported="true"
             android:theme="@style/Theme.Project_Pemob_Techie.FullScreen" />
+        <activity
+            android:name=".ui.content.SearchResultActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Project_Pemob_Techie.FullScreen" />
 
 
         <activity

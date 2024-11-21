@@ -40,6 +40,20 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
         val image: ImageView = view.findViewById(R.id.imageView)
     }
 
+    private var filteredRecommendations = mutableListOf<BookResponse>()
+
+    fun updateFilteredList(query: String) {
+        filteredRecommendations.clear()
+        if (query.isEmpty()) {
+            filteredRecommendations.addAll(recommendations)
+        } else {
+            filteredRecommendations.addAll(recommendations.filter {
+                it.book_title?.lowercase()?.contains(query.lowercase()) == true
+            })
+        }
+        notifyDataSetChanged()
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
