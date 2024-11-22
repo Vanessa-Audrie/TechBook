@@ -4,81 +4,87 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_pemob_techie.R
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-
+import com.example.project_pemob_techie.databinding.ActivitySearchResultBinding
+import com.google.firebase.database.*
 
 class SearchResultActivity : AppCompatActivity() {
 
-    private lateinit var searchResultRecyclerView: RecyclerView
-    private lateinit var searchResultAdapter: RecAdapter
-    private var recommendations: MutableList<BookResponse> = mutableListOf()
+    private lateinit var binding: ActivitySearchResultBinding
+    private lateinit var database: DatabaseReference
+    private lateinit var adapter: RecAdapter
+    private val searchResults = mutableListOf<BookResponse>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search_result)
+        binding = ActivitySearchResultBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // Back Button
-        val backButton: ImageView = findViewById(R.id.imageView25)
-        backButton.setOnClickListener {
-            finish()
-        }
 
-        // Ambil query pencarian dan data buku
         val query = intent.getStringExtra("SEARCH_QUERY") ?: ""
+        Log.d("SearchResultActivity", "Search query: $query")
         val textView: TextView = findViewById(R.id.textView60)
         textView.text = "Search Results For \"$query\""
 
         // Set up RecyclerView
-        searchResultRecyclerView = findViewById(R.id.viewResult)
-        searchResultRecyclerView.layoutManager = LinearLayoutManager(this)
-        searchResultAdapter = RecAdapter(recommendations)
-        searchResultRecyclerView.adapter = searchResultAdapter
+        val recyclerView: RecyclerView = binding.viewResult
+        Log.d("RecyclerViewCheck", "RecyclerView initialized: $recyclerView")
+        recyclerView.layoutManager = GridLayoutManager(this, 2)
+        adapter = RecAdapter(searchResults)
+        recyclerView.adapter = adapter
 
-        Log.d("SearchResultActivity", "RecyclerView adapter terpasang")
+        database =
+            FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
+                .getReference("2/data/")
 
-        // Ambil data dari Firebase
-        fetchBooksFromFirebase(query)
+        performSearch(query)
+
+        val backButton: ImageView = findViewById(R.id.imageView25)
+        backButton.setOnClickListener {
+            finish()
+        }
     }
 
-    private fun fetchBooksFromFirebase(query: String) {
-        val database = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
-            .getReference("2/data/")
+    private fun performSearch(query: String) {
+        if (query.isEmpty()) {
+            Toast.makeText(this, "Search query is empty", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                recommendations.clear()
-
-                for (bookSnapshot in snapshot.children) {
-                    val book = bookSnapshot.getValue(BookResponse::class.java)
+                searchResults.clear()
+                for (dataSnapshot in snapshot.children) {
+                    val book = dataSnapshot.getValue(BookResponse::class.java)
                     if (book != null) {
-                        // Filter berdasarkan query
-                        if (query.isEmpty() || book.book_title?.contains(query, ignoreCase = true) == true) {
-                            recommendations.add(book)
-                            Log.d("SearchResultActivity", "Buku ditambahkan: ${book.book_title}")
-                        } else {
-                            Log.d("SearchResultActivity", "Buku tidak cocok: ${book.book_title}")
-                        }
-                    } else {
-                        Log.e("SearchResultActivity", "Gagal parsing buku: ${bookSnapshot.value}")
+                        Log.d("FirebaseBook", "Book: ${book.book_title}, Author: ${book.author}")
+                    }
+
+                    // Filter by title or author
+                    if (book != null && (book.book_title?.contains(query, true) == true ||
+                                book.author?.contains(query, true) == true)) {
+                        searchResults.add(book)
                     }
                 }
 
-                Log.d("SearchResultActivity", "Total buku ditemukan: ${recommendations.size}")
-                searchResultAdapter.notifyDataSetChanged()
+                // Log hasil pencarian
+                Log.d("SearchResultActivity", "Search results: $searchResults")
+
+                // Update RecyclerView
+                adapter.notifyDataSetChanged()
+
+                if (searchResults.isEmpty()) {
+                    Toast.makeText(this@SearchResultActivity, "No results found", Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("FirebaseError", "Error: ${error.message}")
+                Toast.makeText(this@SearchResultActivity, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 }
-
-

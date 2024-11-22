@@ -88,7 +88,6 @@ class HomeFragment : Fragment() {
         searchBar.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                updateFilteredList(s.toString())
             }
             override fun afterTextChanged(s: Editable?) {}
         })
@@ -96,12 +95,7 @@ class HomeFragment : Fragment() {
         return root
     }
 
-    private fun updateFilteredList(query: String) {
-//        val filtered = recommendations.filter {
-//            it.book_title.contains(query, ignoreCase = true) || it.author.contains(query, ignoreCase = true)
-//        }
-//        adapter.updateFilteredList(filtered)
-    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

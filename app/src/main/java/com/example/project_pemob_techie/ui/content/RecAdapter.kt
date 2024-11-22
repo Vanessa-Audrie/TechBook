@@ -64,6 +64,8 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val recommendation = recommendations[position]
 
+
+
         holder.title.text = recommendation.book_title ?: "No Title Available"
         holder.price.text = "Rp ${recommendation.price ?: "0"}"
 
