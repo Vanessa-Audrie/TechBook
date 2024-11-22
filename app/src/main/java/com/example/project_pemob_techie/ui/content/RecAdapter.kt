@@ -101,22 +101,17 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
 
     private fun loadImageAsync(imageString: String, imageView: ImageView, context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
-            // Decode imageString to ByteArray
             val imageBytes = if (imageString.startsWith("0x")) {
-                // Handle Hex string
                 hexStringToByteArray(imageString.removePrefix("0x"))
             } else {
-                // Handle Base64 string
                 cleanBase64String(imageString)?.let {
                     Base64.decode(it, Base64.DEFAULT)
-                } ?: byteArrayOf() // Default to empty array if string is null or empty
+                } ?: byteArrayOf()
             }
 
-            // If imageBytes is not empty, save the image to file and display
             if (imageBytes.isNotEmpty()) {
                 val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 
-                // Save the image and get the file path
                 val filePath = saveImageToFile(context, imageBytes, "book_image_${System.currentTimeMillis()}")
 
                 withContext(Dispatchers.Main) {
@@ -144,7 +139,7 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
         } else {
             cleanBase64String(imageString)?.let {
                 Base64.decode(it, Base64.DEFAULT)
-            } ?: byteArrayOf() // Default to empty array if string is null or empty
+            } ?: byteArrayOf()
         }
     }
 
@@ -158,7 +153,7 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
         } catch (e: IOException) {
             Log.e("RecAdapter", "Error saving image to file: ${e.message}")
         }
-        return file.absolutePath // Return the file path
+        return file.absolutePath
     }
 
 

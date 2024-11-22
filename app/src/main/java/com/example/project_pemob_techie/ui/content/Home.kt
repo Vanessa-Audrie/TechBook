@@ -54,23 +54,19 @@ class Home : AppCompatActivity() {
                 val searchBar = findViewById<EditText>(R.id.search_bar)
 
                 searchBar.setOnEditorActionListener { v, actionId, event ->
-                    // Cek jika yang dipilih adalah tombol Enter
                     if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
-                        // Ambil query yang dimasukkan oleh pengguna
                         val query = v.text.toString().trim()
                         Log.d("Search", "Query entered: $query")
 
-                        // Pastikan query tidak kosong
                         if (query.isNotEmpty()) {
-                            // Pindah ke Activity_Search_Result
                             val intent = Intent(this@Home, SearchResultActivity::class.java)
-                            intent.putExtra("SEARCH_QUERY", query)  // Kirim query ke Activity_Search_Result
+                            intent.putExtra("SEARCH_QUERY", query)
                             startActivity(intent)
                         }
 
-                        true  // Mengindikasikan bahwa event telah ditangani
+                        true
                     } else {
-                        false  // Event tidak ditangani
+                        false
                     }
                 }
                 updateFilteredList()
