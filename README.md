@@ -26,7 +26,7 @@
 - **Bahasa Pemrograman**: Kotlin
 - **IDE**: Android Studio
 - **Database**: Firebase
-- **Backend**: Node.js
+- **Backend**: Firebase
 
 ## Pembagian Tugas
 - **Nur Adilah**: Backend dan Logika
