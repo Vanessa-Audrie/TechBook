@@ -11,7 +11,8 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:id="@+id/textAccount"/>
+        android:id="@+id/textAccount"
+        tools:ignore="MissingConstraints" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout17"
