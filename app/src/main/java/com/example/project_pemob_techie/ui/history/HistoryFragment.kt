@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.project_pemob_techie.databinding.FragmentHistoryBinding
 
 class HistoryFragment : Fragment() {
@@ -22,16 +20,26 @@ class HistoryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel =
-            ViewModelProvider(this).get(HistoryViewModel::class.java)
-
+        // Inflate the layout using View Binding
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textHistory
-        notificationsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        // Example of connecting views in fragment_history.xml
+        binding.namaBuku.text = "Path of the Dragon" // Update text for the book title
+        binding.tvOrderStatus.text = "Package delivered to Techie Soekarnoputri"
+        binding.tvAddress.text = """
+            Techie Soekarnoputri
+            +62 823 1234 5678
+            Banteng Road No 3, Medan Selayang
+            North Sumatra, 20389
+        """.trimIndent()
+
+        // Example: Set a click listener for the send review button
+        binding.btnSendReview.setOnClickListener {
+            val reviewText = binding.etReview.text.toString()
+            // Handle the review submission (e.g., save it or show a toast)
         }
+
         return root
     }
 
