@@ -10,12 +10,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.FragmentHomeBinding
 import com.example.project_pemob_techie.ui.content.BookResponse
@@ -38,6 +40,7 @@ class HomeFragment : Fragment() {
     private val recommendations = mutableListOf<BookResponse>()
 
     private lateinit var database: DatabaseReference
+    private lateinit var viewPager: ViewPager2
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -45,6 +48,10 @@ class HomeFragment : Fragment() {
         val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        // Setup ViewPager2 untuk Carousel
+        viewPager = binding.viewpagerSlider
+        setupImageCarousel()
 
         recyclerView = binding.viewRecom
         searchBar = binding.searchBar
@@ -95,10 +102,38 @@ class HomeFragment : Fragment() {
         return root
     }
 
+    private fun setupImageCarousel() {
+        val images = listOf(
+            R.drawable.carousel_1,
+            R.drawable.carousel_2,
+            R.drawable.carousel_3
+        )
 
+        viewPager.adapter = object : RecyclerView.Adapter<SimpleViewHolder>() {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleViewHolder {
+                val imageView = ImageView(parent.context).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    scaleType = ImageView.ScaleType.CENTER_CROP
+                }
+                return SimpleViewHolder(imageView)
+            }
+
+            override fun onBindViewHolder(holder: SimpleViewHolder, position: Int) {
+                (holder.itemView as ImageView).setImageResource(images[position])
+            }
+
+            override fun getItemCount(): Int = images.size
+        }
+    }
+
+    private class SimpleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+
