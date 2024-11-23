@@ -1,29 +1,29 @@
 package com.example.project_pemob_techie.ui.login
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import at.favre.lib.crypto.bcrypt.BCrypt
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.ActivitySignupBinding
-import com.example.project_pemob_techie.ui.login.Login
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 class Signup : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupBinding
+    private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_signup)
-
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/").reference
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -45,8 +45,7 @@ class Signup : AppCompatActivity() {
             val password = binding.passwordInput.text.toString().trim()
 
             if (validate(name, username, email, phone, birthday, password)) {
-                val hashedPassword = hashPassword(password)
-                saveUserToDB(name, username, email, phone, birthday, hashedPassword)
+                registerUser(name, username, email, phone, birthday, password)
             }
         }
     }
@@ -67,20 +66,31 @@ class Signup : AppCompatActivity() {
         return true
     }
 
-    private fun hashPassword(password: String): String {
-        return BCrypt.withDefaults().hashToString(12, password.toCharArray())
+    private fun registerUser(name: String, username: String, email: String, phone: String, birthday: String, password: String) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val userId = auth.currentUser?.uid
+                    if (userId != null) {
+                        saveUserToDatabase(userId, name, username, email, phone, birthday)
+                    }
+                } else {
+                    Toast.makeText(this, "Signup failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
-    private fun saveUserToDB(name: String, username: String, email: String, phone: String, birthday: String, hashedPassword: String) {
-        val user = User(name, username, email, phone, birthday, hashedPassword)
+    private fun saveUserToDatabase(uid: String, name: String, username: String, email: String, phone: String, birthday: String) {
+        val user = User(name, username, email, phone, birthday)
 
-        database.child("techbook_techie").child("user").push().setValue(user)
+        database.child("techbook_techie").child("user").child(uid).setValue(user)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Signup successful!", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, Login::class.java))
+                    finish()
                 } else {
-                    Toast.makeText(this, "Signup failed. Please try again!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Failed to save user: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
@@ -91,6 +101,5 @@ data class User(
     val username: String,
     val email: String,
     val phone: String,
-    val birthday: String,
-    val password: String
+    val birthday: String
 )
