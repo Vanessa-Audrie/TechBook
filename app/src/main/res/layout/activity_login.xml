@@ -39,7 +39,7 @@
         android:layout_height="62dp"
         android:layout_marginTop="12dp"
         android:fontFamily="@font/montserrat_medium"
-        android:hint="Username"
+        android:hint="Email"
         android:padding="12dp"
         android:textColor="@android:color/black"
         android:background="@drawable/rounded_corner"

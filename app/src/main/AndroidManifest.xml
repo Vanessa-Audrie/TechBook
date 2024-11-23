@@ -60,6 +60,11 @@
             android:exported="true"
             android:theme="@style/Theme.Project_Pemob_Techie.FullScreen" />
 
+        <activity android:name=".ui.account.EditProfileActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Project_Pemob_Techie.FullScreen" />
+
+
 
         <activity
             android:name=".ui.splashscreen.SplashScreen"
