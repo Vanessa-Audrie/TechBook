@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +22,9 @@ import coil.load
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.project_pemob_techie.R
+import com.example.project_pemob_techie.ui.cart.CartItem
 import com.example.project_pemob_techie.ui.content.BookResponse
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,11 +36,14 @@ import java.io.IOException
 
 class RecAdapter(private val recommendations: List<BookResponse>) :
     RecyclerView.Adapter<RecAdapter.ViewHolder>() {
+    private lateinit var userId: String
+
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.recomTitle)
         val price: TextView = view.findViewById(R.id.price)
         val image: ImageView = view.findViewById(R.id.imageView)
+        val btnAddToCart: Button = view.findViewById(R.id.button)
     }
 
     private var filteredRecommendations = mutableListOf<BookResponse>()
@@ -70,13 +76,24 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
         holder.price.text = "Rp ${recommendation.price ?: "0"}"
 
 
-
         val imageString = recommendation.book_img
         if (!imageString.isNullOrEmpty()) {
             loadImageAsync(imageString, holder.image, holder.itemView.context)
         } else {
             holder.image.setImageResource(R.drawable.error)
         }
+
+        holder.btnAddToCart.setOnClickListener {
+            val cartItem = CartItem(
+                bookId = recommendation.isbn ?: "",
+                book_title = recommendation.book_title,
+                price = recommendation.price,
+                quantity = 1
+            )
+            // Panggil fungsi untuk menambahkan ke keranjang
+            addToCart(holder.itemView.context, cartItem)
+        }
+
 
         holder.title.setOnClickListener { v ->
             val context = v.context
@@ -172,5 +189,19 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
         return ByteArray(hexString.length / 2) { i ->
             hexString.substring(i * 2, i * 2 + 2).toInt(16).toByte()
         }
+    }
+
+    private fun addToCart(context: Context, cartItem: CartItem) {
+        // Contoh: Menyimpan ke Firebase Realtime Database
+        val cartRef = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
+            .getReference("cart/userId/$userId")
+        val itemId = cartItem.bookId
+        cartRef.child(itemId).setValue(cartItem)
+            .addOnSuccessListener {
+                Toast.makeText(context, "${cartItem.book_title} added to cart", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Failed to add to cart: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }

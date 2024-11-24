@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.FragmentHomeBinding
+import com.example.project_pemob_techie.ui.cart.CartActivity
 import com.example.project_pemob_techie.ui.content.BookResponse
 import com.example.project_pemob_techie.ui.content.RecAdapter
 import com.example.project_pemob_techie.ui.content.SearchResultActivity
@@ -48,6 +49,7 @@ class HomeFragment : Fragment() {
         val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        val cartIcon: ImageView = root.findViewById(R.id.imageView2)
 
         // Setup ViewPager2 untuk Carousel
         viewPager = binding.viewpagerSlider
@@ -78,6 +80,11 @@ class HomeFragment : Fragment() {
             }
         })
 
+        cartIcon.setOnClickListener {
+            // Pindah ke ActivityCart
+            val intent = Intent(requireContext(), CartActivity::class.java)
+            startActivity(intent)
+
         searchBar.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = v.text.toString().trim()
@@ -92,19 +99,27 @@ class HomeFragment : Fragment() {
             }
         }
 
-        searchBar.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
+            searchBar.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+        }
 
         return root
     }
 
     private fun setupImageCarousel() {
         val images = listOf(
-            R.drawable.carousel_1,
             R.drawable.carousel_2,
             R.drawable.carousel_3
         )
