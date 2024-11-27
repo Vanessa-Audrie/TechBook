@@ -54,6 +54,11 @@
         <activity android:name=".ui.cart.CartActivity"
             android:exported="true"
             android:theme="@style/Theme.Project_Pemob_Techie.FullScreen" />
+
+        <activity android:name=".ui.genre.GenreActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Project_Pemob_Techie.FullScreen"/>
+
         <activity
             android:name=".ui.content.Home"
             android:exported="true"

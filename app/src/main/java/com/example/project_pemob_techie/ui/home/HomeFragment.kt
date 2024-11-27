@@ -24,6 +24,7 @@ import com.example.project_pemob_techie.ui.cart.CartActivity
 import com.example.project_pemob_techie.ui.content.BookResponse
 import com.example.project_pemob_techie.ui.content.RecAdapter
 import com.example.project_pemob_techie.ui.content.SearchResultActivity
+import com.example.project_pemob_techie.ui.genre.GenreActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -50,6 +51,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
         val cartIcon: ImageView = root.findViewById(R.id.imageView2)
+        val imageAll: ImageView = root.findViewById(R.id.imageAll)
 
         // Setup ViewPager2 untuk Carousel
         viewPager = binding.viewpagerSlider
@@ -79,6 +81,12 @@ class HomeFragment : Fragment() {
                 error.toException().printStackTrace()
             }
         })
+
+        imageAll.setOnClickListener{
+            //pindah ke ActivityGenre
+            val intent = Intent(requireContext(), GenreActivity::class.java)
+            startActivity(intent)
+        }
 
         cartIcon.setOnClickListener {
             // Pindah ke ActivityCart
