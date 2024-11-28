@@ -90,7 +90,6 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
                 price = recommendation.price,
                 quantity = 1
             )
-            // Panggil fungsi untuk menambahkan ke keranjang
             addToCart(holder.itemView.context, cartItem)
         }
 
@@ -130,8 +129,6 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
 
             if (imageBytes.isNotEmpty()) {
                 val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-
-                val filePath = saveImageToFile(context, imageBytes, "book_image_${System.currentTimeMillis()}")
 
                 withContext(Dispatchers.Main) {
                     if (bitmap != null) {
@@ -192,7 +189,6 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
     }
 
     private fun addToCart(context: Context, cartItem: CartItem) {
-        // Contoh: Menyimpan ke Firebase Realtime Database
         val cartRef = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
             .getReference("cart/userId/$userId")
         val itemId = cartItem.bookId

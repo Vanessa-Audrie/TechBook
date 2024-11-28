@@ -13,10 +13,8 @@ import androidx.lifecycle.ViewModel
             val existingItem = currentCart.find { it.bookId == item.bookId }
 
             if (existingItem != null) {
-                // Jika item sudah ada, tingkatkan jumlahnya
                 existingItem.quantity += item.quantity
             } else {
-                // Jika item belum ada, tambahkan ke list
                 currentCart.add(item)
             }
             _cartItems.value = currentCart

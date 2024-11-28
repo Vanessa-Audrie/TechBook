@@ -9,10 +9,9 @@ import com.example.project_pemob_techie.R
 
 class GenreAdapter(
     private val genreList: List<String>,
-    private val onGenreClick: (String) -> Unit // Callback untuk klik genre
+    private val onGenreClick: (String) -> Unit
     ) : RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
 
-    // ViewHolder untuk setiap item genre
     inner class GenreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val genreTextView: TextView = itemView.findViewById(R.id.textView58)
     }

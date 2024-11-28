@@ -10,10 +10,10 @@ data class BookResponse(
     val language: String? = null,
     val mass: String? = null,
     val number_of_pages: String? = null,
-    val price: String? = null, // Change to String
+    val price: String? = null,
     val published_date: String? = null,
     val publisher: String? = null,
-    val stock: String? = null, // Change to String
+    val stock: String? = null,
     val synopsis: String? = null
 )
 

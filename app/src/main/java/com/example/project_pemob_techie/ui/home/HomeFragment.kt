@@ -53,7 +53,6 @@ class HomeFragment : Fragment() {
         val cartIcon: ImageView = root.findViewById(R.id.imageView2)
         val imageAll: ImageView = root.findViewById(R.id.imageAll)
 
-        // Setup ViewPager2 untuk Carousel
         viewPager = binding.viewpagerSlider
         setupImageCarousel()
 
@@ -64,7 +63,7 @@ class HomeFragment : Fragment() {
         adapter = RecAdapter(recommendations)
         recyclerView.adapter = adapter
 
-        database = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
+        database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("2/data/")
 
         database.limitToFirst(10).addValueEventListener(object : ValueEventListener {
@@ -83,44 +82,30 @@ class HomeFragment : Fragment() {
         })
 
         imageAll.setOnClickListener{
-            //pindah ke ActivityGenre
             val intent = Intent(requireContext(), GenreActivity::class.java)
             startActivity(intent)
         }
 
         cartIcon.setOnClickListener {
-            // Pindah ke ActivityCart
             val intent = Intent(requireContext(), CartActivity::class.java)
             startActivity(intent)
+        }
 
         searchBar.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = v.text.toString().trim()
+                Log.d("Search", "Query entered: $query")
+
                 if (query.isNotEmpty()) {
                     val intent = Intent(activity, SearchResultActivity::class.java)
                     intent.putExtra("SEARCH_QUERY", query)
                     startActivity(intent)
                 }
+
                 true
             } else {
                 false
             }
-        }
-
-            searchBar.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                }
-
-                override fun afterTextChanged(s: Editable?) {}
-            })
         }
 
         return root

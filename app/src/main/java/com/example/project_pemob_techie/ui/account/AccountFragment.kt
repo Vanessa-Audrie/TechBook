@@ -24,7 +24,7 @@ class AccountFragment : Fragment() {
     ): View {
         _binding = FragmentAccountBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        database = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/").getReference("techbook_techie/")
+        database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("techbook_techie/")
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             database.child("user").child(userId).addListenerForSingleValueEvent(object : ValueEventListener {

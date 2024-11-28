@@ -21,23 +21,19 @@ class CartActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private lateinit var userId: String
 
-
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
 
-        userId = getUserIdFromSession() // Ambil userId dari session atau intent
+        userId = getUserIdFromSession()
         if (userId.isEmpty()) {
-            finish() // Jika userId kosong, keluar dari activity
+            finish()
             return
         }
 
         val backButton: ImageView = findViewById(R.id.imageView3)
         backButton.setOnClickListener {
-            finish() // Kembali ke activity sebelumnya
+            finish()
         }
         recyclerViewCart = findViewById(R.id.viewCart)
         recyclerViewCart.layoutManager = LinearLayoutManager(this)
@@ -46,43 +42,39 @@ class CartActivity : AppCompatActivity() {
         cartAdapter = CartAdapter(this, cartViewModel.cartItems.value ?: mutableListOf())
         recyclerViewCart.adapter = cartAdapter
 
-        // Observe changes to the cart items
         cartViewModel.cartItems.observe(this, { items -> cartAdapter.updateCart(items)
             recyclerViewCart.adapter = cartAdapter
         })
 
-        // Load data dari Firebase
         loadCartItems()
     }
 
     private fun loadCartItems() {
-        // Referensi ke Firebase berdasarkan userId
-        val cartRef = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
+        val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("3/cart/userId/$userId")
 
         cartRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                cartItems.clear() // Bersihkan list sebelumnya
+                cartItems.clear()
                 for (data in snapshot.children) {
                     val cartItem = data.getValue(CartItem::class.java)
                     if (cartItem != null) {
                         cartItems.add(cartItem)
-                        Log.d("CartActivity", "Item berhasil ditambahkan: $cartItem")
+                        Log.d("CartActivity", "Item successfully added: $cartItem")
                     } else {
-                        Log.e("CartActivity", "Gagal parse item: ${data.value}")
+                        Log.e("CartActivity", "Fail in adding item: ${data.value}")
                     }
                 }
-                cartAdapter.notifyDataSetChanged() // Update RecyclerView
+                cartAdapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("CartActivity", "Error membaca data: ${error.message}")
+                Log.e("CartActivity", "Error : ${error.message}")
             }
         })
     }
 
     private fun getUserIdFromSession(): String {
-        // Ganti dengan logika untuk mengambil userId dari session atau shared preferences
-        return "YOUR_USER_ID" // Dummy ID, ganti dengan nilai sebenarnya
+        return "YOUR_USER_ID"
     }
 }

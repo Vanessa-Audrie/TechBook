@@ -27,7 +27,7 @@ class EditProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_profile)
-        database = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/").getReference("techbook_techie/")
+        database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("techbook_techie/")
 
         emailTextView = findViewById(R.id.textView107)
         birthdayTextView = findViewById(R.id.textView110)

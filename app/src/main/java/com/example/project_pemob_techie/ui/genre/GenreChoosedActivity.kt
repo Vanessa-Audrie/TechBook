@@ -26,7 +26,6 @@ class GenreChoosedActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerViewBooks)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Inisialisasi adapter dengan daftar kosong
         recAdapter = RecAdapter(emptyList())
         recyclerView.adapter = recAdapter
 
@@ -37,7 +36,7 @@ class GenreChoosedActivity : AppCompatActivity() {
 
     private fun loadBooksByGenre(genre: String) {
         val booksRef = FirebaseDatabase.getInstance().getReference("books")
-        booksRef.orderByChild("genre").equalTo(genre) //menyaring buku sesuai dengan genrenya
+        booksRef.orderByChild("genre").equalTo(genre)
             .addValueEventListener(object : ValueEventListener {
 
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -49,7 +48,6 @@ class GenreChoosedActivity : AppCompatActivity() {
                         }
                     }
 
-                    // Update adapter with books based on the selected genre
                     //recAdapter.updateBooks(books)
 
                 }

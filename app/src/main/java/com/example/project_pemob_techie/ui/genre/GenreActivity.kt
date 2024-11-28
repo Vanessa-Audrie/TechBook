@@ -32,7 +32,6 @@ class GenreActivity : AppCompatActivity() {
     }
 
     private fun onGenreClick(genre: String){
-        //activity yang menampilkan buku berdasarkan genre
         val intent = Intent(this, GenreChoosedActivity::class.java)
         intent.putExtra("GENRE", genre)
         startActivity(intent)

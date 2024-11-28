@@ -38,7 +38,7 @@ class WishlistFragment : Fragment(R.layout.fragment_wishlist) {
     }
 
     private fun loadWishlist() {
-        val wishlistRef = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
+        val wishlistRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("9/wishlist/userId/$userId")
 
         wishlistRef.addValueEventListener(object : ValueEventListener {

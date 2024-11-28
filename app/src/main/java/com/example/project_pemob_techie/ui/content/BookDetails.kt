@@ -95,21 +95,15 @@ class BookDetails : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Ambil data buku yang ingin ditambahkan ke keranjang
             val cartItem = com.example.project_pemob_techie.ui.cart.CartItem(
-                bookId = bookISBN ?: "", // Gunakan elvis operator jika bookISBN mungkin null
-                book_title = bookTitle ?: "Unknown Title", // Default "Unknown Title" jika null
-                price = bookPrice ?: "0", // Mengonversi harga menjadi integer
-                quantity = 1 // Misalnya, menetapkan quantity 1
+                bookId = bookISBN ?: "",
+                book_title = bookTitle ?: "Unknown Title",
+                price = bookPrice ?: "0",
+                quantity = 1
             )
 
             viewModel.addToCart(cartItem)
 
-
-
-
-
-            // Tambahkan item ke Firebase
             val cartRef = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/").getReference("3/cart/userId/$userId")
             cartRef.push().setValue(cartItem).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -145,7 +139,7 @@ class BookDetails : AppCompatActivity() {
         }.attach()
 
         val database =
-            FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
+            FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("9/")
         val wishlistRef = database.child("wishlist").child("userId")
         val itemId = bookISBN ?: ""
@@ -244,13 +238,5 @@ class BookDetails : AppCompatActivity() {
             ""
         }
     }
-    data class CartItem(
-        val bookId: String = "",
-        val bookTitle: String = "",
-        val bookPrice: Int = 0,
-        val quantity: Int = 1
-    )
-
-
 
 }

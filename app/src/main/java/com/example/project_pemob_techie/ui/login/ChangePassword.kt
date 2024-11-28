@@ -36,7 +36,6 @@ class ChangePassword : AppCompatActivity() {
         binding.changePassButton.setOnClickListener {
             val newPassword = binding.verifyPassInput.text.toString().trim()
 
-            // Validate that passwords match
             if (newPassword == binding.passwordInput.text.toString().trim()) {
                 if (newPassword.isNotEmpty()) {
                     resetPassword(newPassword)

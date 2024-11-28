@@ -11,8 +11,6 @@ class HistoryFragment : Fragment() {
 
     private var _binding: FragmentHistoryBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -20,12 +18,10 @@ class HistoryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout using View Binding
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Example of connecting views in fragment_history.xml
-        binding.namaBuku.text = "Path of the Dragon" // Update text for the book title
+        binding.namaBuku.text = "Path of the Dragon"
         binding.tvOrderStatus.text = "Package delivered to Techie Soekarnoputri"
         binding.tvAddress.text = """
             Techie Soekarnoputri
@@ -34,10 +30,8 @@ class HistoryFragment : Fragment() {
             North Sumatra, 20389
         """.trimIndent()
 
-        // Example: Set a click listener for the send review button
         binding.btnSendReview.setOnClickListener {
             val reviewText = binding.etReview.text.toString()
-            // Handle the review submission (e.g., save it or show a toast)
         }
 
         return root
