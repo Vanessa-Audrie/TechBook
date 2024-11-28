@@ -189,7 +189,7 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
     }
 
     private fun addToCart(context: Context, cartItem: CartItem) {
-        val cartRef = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/")
+        val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("cart/userId/$userId")
         val itemId = cartItem.bookId
         cartRef.child(itemId).setValue(cartItem)

@@ -34,7 +34,7 @@ object SessionManager {
     fun endSession(context: Context) {
         val sharedPreferences = getSharedPreferences(context)
         val editor = sharedPreferences.edit()
-        editor.clear()  // This will clear all session data
+        editor.clear()
         editor.apply()
     }
 }

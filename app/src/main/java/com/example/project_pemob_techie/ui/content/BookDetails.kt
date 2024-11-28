@@ -26,6 +26,7 @@ import android.graphics.Bitmap
 import android.widget.Button
 import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.project_pemob_techie.ui.cart.CartActivity
+import com.example.project_pemob_techie.ui.cart.CartItem
 import com.example.project_pemob_techie.ui.cart.CartViewModel
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.Dispatchers
@@ -48,8 +49,6 @@ class BookDetails : AppCompatActivity() {
         val cartIcon: ImageView = findViewById(R.id.imageView32)
         val addToCartButton: Button = findViewById(R.id.button10)
 
-
-
         backButton.setOnClickListener {
             finish()
         }
@@ -57,7 +56,6 @@ class BookDetails : AppCompatActivity() {
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
         }
-
 
         val bookTitle = intent.getStringExtra("BOOK_TITLE")
         val bookPrice = intent.getStringExtra("BOOK_PRICE")
@@ -70,9 +68,6 @@ class BookDetails : AppCompatActivity() {
         val bookDate = intent.getStringExtra("BOOK_DATE")
         val bookMass = intent.getStringExtra("BOOK_MASS")
         val bookPublisher = intent.getStringExtra("BOOK_PUBLISHER")
-
-
-
         bookTitleTextView.text = bookTitle ?: "No Title Available"
         bookPriceTextView.text = "Rp $bookPrice"
 
@@ -83,34 +78,6 @@ class BookDetails : AppCompatActivity() {
                 bookImageView.setImageBitmap(bitmap)
             } else {
                 bookImageView.setImageResource(R.drawable.error)
-            }
-        }
-
-
-        addToCartButton.setOnClickListener {
-            val userId = SessionManager.getUserId(this)
-            if (userId.isNullOrEmpty() || bookISBN.isNullOrEmpty()) {
-                Toast.makeText(this, "User not logged in or Invalid book ID", Toast.LENGTH_SHORT)
-                    .show()
-                return@setOnClickListener
-            }
-
-            val cartItem = com.example.project_pemob_techie.ui.cart.CartItem(
-                bookId = bookISBN ?: "",
-                book_title = bookTitle ?: "Unknown Title",
-                price = bookPrice ?: "0",
-                quantity = 1
-            )
-
-            viewModel.addToCart(cartItem)
-
-            val cartRef = FirebaseDatabase.getInstance("https://techbook-6099b-default-rtdb.firebaseio.com/").getReference("3/cart/userId/$userId")
-            cartRef.push().setValue(cartItem).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(this, "Item added to cart!", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "Failed to add item to cart.", Toast.LENGTH_SHORT).show()
-                }
             }
         }
 
@@ -215,6 +182,47 @@ class BookDetails : AppCompatActivity() {
                 }
             })
         }
+
+        val databasecart =
+            FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference("3/")
+        val cartRef = databasecart.child("cart").child("userId")
+        val cartitemId = bookISBN ?: ""
+
+        if (userId.isNullOrEmpty()) {
+            return
+        }
+
+        val userCartRef = cartRef.child(userId).child(cartitemId)
+
+        addToCartButton.setOnClickListener {
+            if (itemId.isEmpty()) {
+                Toast.makeText(this, "Invalid book ID", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val userId = SessionManager.getUserId(this)
+            if (userId.isNullOrEmpty()) {
+                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val hexString = getHexStringFromImagePath(bookImagePath)
+            val cartItem = mapOf(
+                "isbn" to itemId,
+                "title" to bookTitle,
+                "price" to bookPrice,
+                "image" to hexString,
+                "quantity" to 1
+            )
+
+            userCartRef.setValue(cartItem).addOnSuccessListener {
+                Toast.makeText(this@BookDetails, "Added to cart", Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener {
+                Toast.makeText(this@BookDetails, "Failed to update cart", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 
     private fun getHexStringFromImagePath(imagePath: String?): String {
