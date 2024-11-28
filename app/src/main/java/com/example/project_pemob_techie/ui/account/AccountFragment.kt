@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.project_pemob_techie.databinding.FragmentAccountBinding
+import com.example.project_pemob_techie.ui.login.Login
+import com.example.project_pemob_techie.ui.login.VerifyEmail
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -58,7 +60,26 @@ class AccountFragment : Fragment() {
             val intent = Intent(requireContext(), EditProfileActivity::class.java)
             startActivity(intent)
         }
+
+        binding.button10.setOnClickListener {
+            val intent = Intent(requireContext(), VerifyEmail::class.java)
+            startActivity(intent)
+        }
+
+        binding.button9.setOnClickListener {
+            logoutUser()
+        }
+
         return root
+    }
+
+    private fun logoutUser() {
+        SessionManager.endSession(requireContext())
+        FirebaseAuth.getInstance().signOut()
+        Toast.makeText(requireContext(), "You have been logged out.", Toast.LENGTH_SHORT).show()
+        val intent = Intent(requireContext(), Login::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK // Clear activity stack
+        startActivity(intent)
     }
 
     override fun onDestroyView() {
@@ -66,3 +87,4 @@ class AccountFragment : Fragment() {
         _binding = null
     }
 }
+

@@ -27,10 +27,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.login.ChangePassword"
-            android:exported="true"
-            android:theme="@style/Theme.Project_Pemob_Techie.FullScreen" />
-        <activity
             android:name=".ui.login.VerifyEmail"
             android:exported="true"
             android:theme="@style/Theme.Project_Pemob_Techie.FullScreen" />
