@@ -34,7 +34,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 
-class RecAdapter(private val recommendations: List<BookResponse>) :
+class RecAdapter(private var recommendations: List<BookResponse>) :
     RecyclerView.Adapter<RecAdapter.ViewHolder>() {
     private lateinit var userId: String
 
@@ -172,7 +172,10 @@ class RecAdapter(private val recommendations: List<BookResponse>) :
         return file.absolutePath
     }
 
-
+    fun updateBooks(newBooks: List<BookResponse>) {
+        recommendations = newBooks
+        notifyDataSetChanged()
+    }
 
     private fun cleanBase64String(base64String: String?): String? {
         return if (!base64String.isNullOrEmpty() && base64String.startsWith("data:image")) {

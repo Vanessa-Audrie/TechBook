@@ -11,6 +11,7 @@ data class BookResponse(
     val mass: String? = null,
     val number_of_pages: String? = null,
     val price: String? = null,
+    val keyword: String? = null,
     val published_date: String? = null,
     val publisher: String? = null,
     val stock: String? = null,
