@@ -2,6 +2,7 @@ package com.example.project_pemob_techie.ui.content
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
@@ -19,9 +20,9 @@ class SearchResultActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private lateinit var adapter: RecAdapter
     private val searchResults = mutableListOf<BookResponse>()
-
+    private lateinit var progressBar: View
     var lastVisibleKey: String? = null
-
+    val recyclerView: RecyclerView = findViewById(R.id.viewResult)
     private val searchCache = mutableMapOf<String, List<BookResponse>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +35,7 @@ class SearchResultActivity : AppCompatActivity() {
         val textView: TextView = findViewById(R.id.textView60)
         textView.text = "Search Results For \"$query\""
 
-        val recyclerView: RecyclerView = findViewById(R.id.viewResult)
+
         recyclerView.layoutManager = GridLayoutManager(this, 2)
         adapter = RecAdapter(searchResults)
         recyclerView.adapter = adapter
@@ -63,6 +64,8 @@ class SearchResultActivity : AppCompatActivity() {
     }
 
     private fun performSearch(query: String) {
+        progressBar = findViewById(R.id.progressBar)
+        showLoading(true)
         if (query.isEmpty()) {
             Toast.makeText(this, "Search query is empty", Toast.LENGTH_SHORT).show()
             return
@@ -82,6 +85,7 @@ class SearchResultActivity : AppCompatActivity() {
 
         queryRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                showLoading(false)
                 searchResults.clear()
 
                 for (dataSnapshot in snapshot.children) {
@@ -106,4 +110,8 @@ class SearchResultActivity : AppCompatActivity() {
         })
     }
 
+    private fun showLoading(isLoading: Boolean) {
+        progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        recyclerView.visibility = if (isLoading) View.GONE else View.VISIBLE
+    }
 }

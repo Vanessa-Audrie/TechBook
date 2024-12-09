@@ -14,9 +14,9 @@ class GenreActivity : AppCompatActivity() {
 
 
     private val genres = listOf(
-        "Fantasy", "Action", "Comics", "Self Improvement", "Mystery", "History",
-        "Philosophy", "Biography", "Business",  "Manga", "Fiction", "Romance",
-        "Music", "Children's", "Psychology", "Horror", "Spirituality", "Art"
+        "Fantasy", "Action", "Comic", "Self-improvement", "Mystery", "History",
+        "Philosophy", "Biography", "Business",  "Comedy", "Fiction", "Romance",
+        "Music", "Children", "Psychology", "Horror", "Spirituality", "Art"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

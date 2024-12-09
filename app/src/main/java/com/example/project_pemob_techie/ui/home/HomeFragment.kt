@@ -1,6 +1,7 @@
 package com.example.project_pemob_techie.ui.home
 
 import android.content.Intent
+import android.media.Image
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,6 +26,7 @@ import com.example.project_pemob_techie.ui.content.BookResponse
 import com.example.project_pemob_techie.ui.content.RecAdapter
 import com.example.project_pemob_techie.ui.content.SearchResultActivity
 import com.example.project_pemob_techie.ui.genre.GenreActivity
+import com.example.project_pemob_techie.ui.genre.GenreChoosedActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -52,6 +54,10 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
         val cartIcon: ImageView = root.findViewById(R.id.imageView2)
         val imageAll: ImageView = root.findViewById(R.id.imageAll)
+        val fantasyButton: ImageView = root.findViewById(R.id.imageFantasy)
+        val mysteryButton: ImageView = root.findViewById(R.id.imageMystery)
+        val romanceButton: ImageView = root.findViewById(R.id.imageRomance)
+        val horrorButton: ImageView = root.findViewById(R.id.imageHorror)
 
         viewPager = binding.viewpagerSlider
         setupImageCarousel()
@@ -83,6 +89,30 @@ class HomeFragment : Fragment() {
 
         imageAll.setOnClickListener{
             val intent = Intent(requireContext(), GenreActivity::class.java)
+            startActivity(intent)
+        }
+
+        fantasyButton.setOnClickListener{
+            val intent = Intent(requireContext(), GenreChoosedActivity::class.java)
+            intent.putExtra("GENRE", "Fantasy")
+            startActivity(intent)
+        }
+
+        mysteryButton.setOnClickListener{
+            val intent = Intent(requireContext(), GenreChoosedActivity::class.java)
+            intent.putExtra("GENRE", "Mystery")
+            startActivity(intent)
+        }
+
+        romanceButton.setOnClickListener{
+            val intent = Intent(requireContext(), GenreChoosedActivity::class.java)
+            intent.putExtra("GENRE", "Romance")
+            startActivity(intent)
+        }
+
+        horrorButton.setOnClickListener{
+            val intent = Intent(requireContext(), GenreChoosedActivity::class.java)
+            intent.putExtra("GENRE", "Horror")
             startActivity(intent)
         }
 

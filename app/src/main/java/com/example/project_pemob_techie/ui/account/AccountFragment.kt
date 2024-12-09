@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.example.project_pemob_techie.databinding.FragmentAccountBinding
 import com.example.project_pemob_techie.ui.login.Login
 import com.example.project_pemob_techie.ui.login.VerifyEmail
+import com.example.project_pemob_techie.ui.login.VerifyEmail_ChangePW
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -62,7 +63,7 @@ class AccountFragment : Fragment() {
         }
 
         binding.button10.setOnClickListener {
-            val intent = Intent(requireContext(), VerifyEmail::class.java)
+            val intent = Intent(requireContext(), VerifyEmail_ChangePW::class.java)
             startActivity(intent)
         }
 
@@ -78,7 +79,7 @@ class AccountFragment : Fragment() {
         FirebaseAuth.getInstance().signOut()
         Toast.makeText(requireContext(), "You have been logged out.", Toast.LENGTH_SHORT).show()
         val intent = Intent(requireContext(), Login::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK // Clear activity stack
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
 

@@ -54,7 +54,7 @@ class CartActivity : AppCompatActivity() {
     private fun loadCartItems() {
         val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("3/cart/userId/$userId")
-
+        showLoading(true)
         cartRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val cartItems = mutableListOf<CartItem>()

@@ -1,5 +1,6 @@
 package com.example.project_pemob_techie.ui.login
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -8,9 +9,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.ActivitySignupBinding
+import com.example.project_pemob_techie.ui.login.Login
+import com.example.project_pemob_techie.ui.login.LoginSignup
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import java.util.Calendar
 
 class Signup : AppCompatActivity() {
 
@@ -33,7 +37,12 @@ class Signup : AppCompatActivity() {
         }
 
         binding.backButton.setOnClickListener {
-            finish()
+            val intent = Intent(this, LoginSignup::class.java)
+            startActivity(intent)
+        }
+
+        binding.birthdayInput.setOnClickListener {
+            showDatePicker()
         }
 
         binding.signupButton.setOnClickListener {
@@ -48,6 +57,26 @@ class Signup : AppCompatActivity() {
                 registerUser(name, username, email, phone, birthday, password)
             }
         }
+    }
+
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            this,
+            { _, selectedYear, selectedMonth, selectedDay ->
+                // Update the birthday EditText with the selected date
+                val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                binding.birthdayInput.setText(formattedDate)
+            },
+            year,
+            month,
+            day
+        )
+        datePickerDialog.show()
     }
 
     private fun validate(name: String, username: String, email: String, phone: String, birthday: String, password: String): Boolean {

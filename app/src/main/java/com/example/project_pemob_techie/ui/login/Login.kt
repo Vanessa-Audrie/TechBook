@@ -45,7 +45,8 @@ class Login : AppCompatActivity() {
         }
 
         binding.backButton.setOnClickListener {
-            finish()
+            val intent = Intent(this, LoginSignup::class.java)
+            startActivity(intent)
         }
 
         binding.loginButton.setOnClickListener {
