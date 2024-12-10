@@ -28,7 +28,7 @@ class CartRepository(context: Context) {
         )
     }
 
-    suspend fun addCartItem(cartItem: CartItem) {
+    suspend fun addCartItem(cartItem: CartItemEntity) {
         withContext(Dispatchers.IO) {
             cartDao.insert(mapToCartItemEntity(cartItem))
         }
