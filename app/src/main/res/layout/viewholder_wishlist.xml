@@ -30,6 +30,7 @@
         android:text="Title"
         android:textColor="@color/black"
         android:textSize="17dp"
+        android:clickable="true"
         app:layout_constraintStart_toEndOf="@+id/imageView5"
         app:layout_constraintTop_toTopOf="parent" />
 
