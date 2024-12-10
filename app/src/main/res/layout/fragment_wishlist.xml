@@ -81,31 +81,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <CheckBox
-            android:id="@+id/checkBox2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:text="Select All"
-            android:textSize="22dp"
-            android:textColor="@color/gray"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <Button
             android:id="@+id/button3"
             style="@style/AddToCartButton"
             android:layout_width="190dp"
             android:layout_height="55dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/add_to_cart_button"
             android:text="Add To Cart"
             android:textAllCaps="false"
-            android:background="@drawable/add_to_cart_button"
             android:textSize="20dp"
-            android:layout_marginStart="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/checkBox2"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
