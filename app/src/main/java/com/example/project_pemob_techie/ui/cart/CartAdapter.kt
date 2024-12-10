@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -15,8 +16,11 @@ import com.google.firebase.database.FirebaseDatabase
 
 class CartAdapter(
     private val context: Context,
-    private var cartItems: MutableList<CartItem>
+    private var cartItems: MutableList<CartItem>,
+    private val onSelectAllChange: (Boolean) -> Unit
 ) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
+
+    private var selectAllChecked = false
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val bookTitle: TextView = view.findViewById(R.id.textView20)
@@ -25,6 +29,7 @@ class CartAdapter(
         val btnIncrease: TextView = view.findViewById(R.id.textView22)
         val btnDecrease: TextView = view.findViewById(R.id.textView24)
         val btnDelete: ImageView = view.findViewById(R.id.imageView10)
+        val checkBox: CheckBox = view.findViewById(R.id.checkBox4)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,11 +43,17 @@ class CartAdapter(
         holder.bookTitle.text = cartItem.book_title
         holder.bookPrice.text = "Rp ${cartItem.price}"
         holder.quantity.text = cartItem.quantity.toString()
+        holder.checkBox.isChecked = cartItem.selected
 
         if (!cartItem.image.isNullOrEmpty()) {
             val imageBytes = hexStringToByteArray(cartItem.image!!)
             val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
             holder.itemView.findViewById<ImageView>(R.id.imageView9).setImageBitmap(bitmap)
+        }
+
+        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
+            cartItem.selected = isChecked
+            notifySelectAllState()
         }
 
         holder.btnIncrease.setOnClickListener {
@@ -75,6 +86,20 @@ class CartAdapter(
         notifyDataSetChanged()
     }
 
+    fun selectAllItems(selectAll: Boolean) {
+        cartItems.forEach { it.selected = selectAll }
+        notifyDataSetChanged()
+    }
+
+    fun getSelectedItems(): List<CartItem> {
+        return cartItems.filter { it.selected }
+    }
+
+    private fun notifySelectAllState() {
+        selectAllChecked = cartItems.all { it.selected }
+        onSelectAllChange(selectAllChecked)
+    }
+
     private fun removeItemFromCart(cartItem: CartItem, position: Int) {
         val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("3/cart/userId/${cartItem.bookId}")
@@ -90,7 +115,6 @@ class CartAdapter(
             }
     }
 
-
     private fun updateCartInDatabase(cartItem: CartItem) {
         val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("3/cart/userId/${cartItem.bookId}")
@@ -100,7 +124,6 @@ class CartAdapter(
                 Toast.makeText(context, "Failed to update quantity: ${it.message}", Toast.LENGTH_SHORT).show()
             }
     }
-
 
     private fun hexStringToByteArray(hex: String): ByteArray {
         val result = ByteArray(hex.length / 2)

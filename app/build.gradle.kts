@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.firebase.database.ktx)
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.identity.jvm)
+    implementation(libs.androidx.room.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,4 +74,5 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:23.1.0")
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+    implementation("androidx.room:room-runtime:2.5.0")
 }

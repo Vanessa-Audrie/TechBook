@@ -1,18 +1,23 @@
 package com.example.project_pemob_techie.ui.cart
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.ui.account.SessionManager
 import com.example.project_pemob_techie.ui.content.CartAdapter
 import com.google.firebase.database.*
+import kotlinx.coroutines.launch
 
 class CartActivity : AppCompatActivity() {
 
@@ -22,7 +27,7 @@ class CartActivity : AppCompatActivity() {
     private lateinit var cartItems: MutableList<CartItem>
     private val cartViewModel: CartViewModel by viewModels()
     private lateinit var userId: String
-
+    private lateinit var cartRepository: CartRepository
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
@@ -41,14 +46,47 @@ class CartActivity : AppCompatActivity() {
         recyclerViewCart = findViewById(R.id.viewCart)
         recyclerViewCart.layoutManager = LinearLayoutManager(this)
         cartItems = mutableListOf()
-        cartAdapter = CartAdapter(this, cartItems)
+        cartAdapter = CartAdapter(this, cartItems) { isChecked ->
+
+        }
         progressBar = findViewById(R.id.progressBar2)
         recyclerViewCart.adapter = cartAdapter
         cartViewModel.cartItems.observe(this, { items ->
             cartAdapter.updateCart(items)
         })
 
+
         loadCartItems()
+
+        val selectAllCheckBox = findViewById<CheckBox>(R.id.checkBox2)
+        val checkoutButton = findViewById<Button>(R.id.button3)
+
+        selectAllCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            cartAdapter.selectAllItems(isChecked)
+        }
+        cartRepository = CartRepository(this)
+        checkoutButton.setOnClickListener {
+            val selectedItems = cartAdapter.getSelectedItems()
+            if (selectedItems.isNotEmpty()) {
+                // Save selected items to the Room database
+                lifecycleScope.launch {
+                    selectedItems.forEach { cartItem ->
+                        cartRepository.addCartItem(cartItem)
+                    }
+                }
+                proceedToCheckout(selectedItems)
+            } else {
+                Toast.makeText(this, "No items selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+    private fun proceedToCheckout(selectedItems: List<CartItem>) {
+        val intent = Intent(this, CheckoutActivity::class.java).apply {
+            putParcelableArrayListExtra("selectedItems", ArrayList(selectedItems))
+        }
+        startActivity(intent)
     }
 
     private fun loadCartItems() {
