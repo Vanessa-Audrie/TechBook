@@ -1,19 +1,51 @@
-package com.example.project_pemob_techie.ui.cart
+package com.example.project_pemob_techie.ui.cart;
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import android.content.Context
+import androidx.lifecycle.LiveData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-@Dao
-interface CartDao {
+class CartRepository(context: Context) {
 
-    @Insert
-    suspend fun insert(cartItem: CartItem)
+    private val cartDao: CartDao = CartDatabase.getDatabase(context).cartDao()
 
-    @Query("SELECT * FROM cart_items")
-    suspend fun getAll(): List<CartItem> // Return List<CartItem>
+    private fun mapToCartItem(cartItemEntity: CartItemEntity): CartItem {
+        return CartItem(
+            cartItemEntity.bookId,
+            cartItemEntity.bookTitle,
+            cartItemEntity.price,
+            cartItemEntity.quantity,
+            cartItemEntity.image,
+            cartItemEntity.selected
+        )
+    }
+    private fun mapToCartItemEntity(cartItem: CartItem): CartItemEntity {
+        return CartItemEntity(
+            bookId = cartItem.bookId,
+            bookTitle = cartItem.bookTitle,
+            price = cartItem.price,
+            quantity = cartItem.quantity,
+            image = cartItem.image,
+            selected = cartItem.selected
+        )
+    }
 
-    @Delete
-    suspend fun delete(cartItem: CartItem)
+    suspend fun addCartItem(cartItem: CartItem) {
+        withContext(Dispatchers.IO) {
+            cartDao.insert(mapToCartItemEntity(cartItem))
+        }
+    }
+
+    suspend fun getCartItems(): List<CartItem> {
+        return withContext(Dispatchers.IO) {
+            cartDao.getAll().map { mapToCartItem(it) }
+        }
+    }
+
+    suspend fun deleteCartItem(cartItem: CartItem) {
+        withContext(Dispatchers.IO) {
+            cartDao.delete(mapToCartItemEntity(cartItem))
+        }
+    }
 }
+

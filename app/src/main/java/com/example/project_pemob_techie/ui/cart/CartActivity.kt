@@ -28,6 +28,7 @@ class CartActivity : AppCompatActivity() {
     private val cartViewModel: CartViewModel by viewModels()
     private lateinit var userId: String
     private lateinit var cartRepository: CartRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
@@ -46,15 +47,16 @@ class CartActivity : AppCompatActivity() {
         recyclerViewCart = findViewById(R.id.viewCart)
         recyclerViewCart.layoutManager = LinearLayoutManager(this)
         cartItems = mutableListOf()
-        cartAdapter = CartAdapter(this, cartItems) { isChecked ->
+        cartAdapter = CartAdapter(this, cartItems) { isChecked -> }
 
-        }
         progressBar = findViewById(R.id.progressBar2)
         recyclerViewCart.adapter = cartAdapter
+
         cartViewModel.cartItems.observe(this, { items ->
             cartAdapter.updateCart(items)
         })
 
+        cartRepository = CartRepository(this)
 
         loadCartItems()
 
@@ -64,11 +66,10 @@ class CartActivity : AppCompatActivity() {
         selectAllCheckBox.setOnCheckedChangeListener { _, isChecked ->
             cartAdapter.selectAllItems(isChecked)
         }
-        cartRepository = CartRepository(this)
+
         checkoutButton.setOnClickListener {
             val selectedItems = cartAdapter.getSelectedItems()
             if (selectedItems.isNotEmpty()) {
-                // Save selected items to the Room database
                 lifecycleScope.launch {
                     selectedItems.forEach { cartItem ->
                         cartRepository.addCartItem(cartItem)
@@ -81,7 +82,6 @@ class CartActivity : AppCompatActivity() {
         }
     }
 
-
     private fun proceedToCheckout(selectedItems: List<CartItem>) {
         val intent = Intent(this, CheckoutActivity::class.java).apply {
             putParcelableArrayListExtra("selectedItems", ArrayList(selectedItems))
@@ -93,6 +93,7 @@ class CartActivity : AppCompatActivity() {
         val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("3/cart/userId/$userId")
         showLoading(true)
+
         cartRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val cartItems = mutableListOf<CartItem>()
@@ -134,3 +135,4 @@ class CartActivity : AppCompatActivity() {
         return SessionManager.getUserId(this)
     }
 }
+

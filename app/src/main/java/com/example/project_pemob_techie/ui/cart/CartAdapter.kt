@@ -40,7 +40,7 @@ class CartAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cartItem = cartItems[position]
-        holder.bookTitle.text = cartItem.book_title
+        holder.bookTitle.text = cartItem.bookTitle
         holder.bookPrice.text = "Rp ${cartItem.price}"
         holder.quantity.text = cartItem.quantity.toString()
         holder.checkBox.isChecked = cartItem.selected
@@ -106,7 +106,7 @@ class CartAdapter(
 
         cartRef.removeValue()
             .addOnSuccessListener {
-                Toast.makeText(context, "${cartItem.book_title} removed from cart", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "${cartItem.bookTitle} removed from cart", Toast.LENGTH_SHORT).show()
                 cartItems.removeAt(position)
                 notifyItemRemoved(position)
             }

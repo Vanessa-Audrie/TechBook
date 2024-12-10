@@ -5,10 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [CartItem::class], version = 1)
+@Database(entities = [CartItemEntity::class], version = 1)
 abstract class CartDatabase : RoomDatabase() {
-
-    abstract fun cartDao(): DataAccessLocal
+    abstract fun cartDao(): CartDao
 
     companion object {
         private var INSTANCE: CartDatabase? = null
@@ -26,3 +25,4 @@ abstract class CartDatabase : RoomDatabase() {
         }
     }
 }
+
