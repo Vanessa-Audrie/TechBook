@@ -1,6 +1,5 @@
 package com.example.project_pemob_techie.ui.cart
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -75,19 +74,19 @@ class CartActivity : AppCompatActivity() {
                         cartRepository.addCartItem(cartItem)
                     }
                 }
-                proceedToCheckout(selectedItems)
+//                proceedToCheckout(selectedItems)
             } else {
                 Toast.makeText(this, "No items selected", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun proceedToCheckout(selectedItems: List<CartItem>) {
-        val intent = Intent(this, CheckoutActivity::class.java).apply {
-            putParcelableArrayListExtra("selectedItems", ArrayList(selectedItems))
-        }
-        startActivity(intent)
-    }
+//    private fun proceedToCheckout(selectedItems: List<CartItem>) {
+//        val intent = Intent(this, CheckoutActivity::class.java).apply {
+//            putParcelableArrayListExtra("selectedItems", ArrayList(selectedItems))
+//        }
+//        startActivity(intent)
+//    }
 
     private fun loadCartItems() {
         val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
@@ -104,7 +103,7 @@ class CartActivity : AppCompatActivity() {
                     val quantity = itemSnapshot.child("quantity").value as? Int ?: 1
 
                     if (bookTitle != null && price != null && image != null) {
-                        cartItems.add(CartItem(itemSnapshot.key ?: "", bookTitle, price, quantity, image))
+                        cartItems.add(CartItem(itemSnapshot.key ?: "", bookTitle, price, quantity))
                     }
                 }
 

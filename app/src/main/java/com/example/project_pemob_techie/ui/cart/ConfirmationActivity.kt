@@ -35,7 +35,7 @@ class ConfirmationActivity : AppCompatActivity() {
         textViewTotalPrice = findViewById(R.id.textView46)
 //        confirmationRecyclerView = findViewById(R.id.recyclerViewConfirmation)
 
-        selectedItems = intent.getParcelableArrayListExtra("selectedItems") ?: ArrayList()
+//        selectedItems = intent.getParcelableArrayListExtra("selectedItems") ?: ArrayList()
 
         // Set up the RecyclerView to display the cart items
 //        cartAdapter = CartAdapter(this, selectedItems)

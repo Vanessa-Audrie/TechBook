@@ -2,9 +2,7 @@ package com.example.project_pemob_techie.ui.content
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.opengl.ETC1.decodeImage
 import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,16 +12,11 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import coil.ImageLoader
 import coil.load
-import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.ui.cart.CartItem
-import com.example.project_pemob_techie.ui.content.BookResponse
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -86,8 +79,8 @@ class RecAdapter(private var recommendations: List<BookResponse>) :
         holder.btnAddToCart.setOnClickListener {
             val cartItem = CartItem(
                 bookId = recommendation.isbn ?: "",
-                book_title = recommendation.book_title,
-                price = recommendation.price,
+                bookTitle = recommendation.book_title ?: "",
+                price = recommendation.price ?: "",
                 quantity = 1
             )
             addToCart(holder.itemView.context, cartItem)
@@ -197,7 +190,7 @@ class RecAdapter(private var recommendations: List<BookResponse>) :
         val itemId = cartItem.bookId
         cartRef.child(itemId).setValue(cartItem)
             .addOnSuccessListener {
-                Toast.makeText(context, "${cartItem.book_title} added to cart", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "${cartItem.bookTitle} added to cart", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
                 Toast.makeText(context, "Failed to add to cart: ${it.message}", Toast.LENGTH_SHORT).show()

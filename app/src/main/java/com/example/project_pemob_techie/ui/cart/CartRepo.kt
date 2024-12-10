@@ -1,7 +1,6 @@
 package com.example.project_pemob_techie.ui.cart;
 
 import android.content.Context
-import androidx.lifecycle.LiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -15,11 +14,10 @@ class CartRepository(context: Context) {
             cartItemEntity.bookTitle,
             cartItemEntity.price,
             cartItemEntity.quantity,
-            cartItemEntity.image,
             cartItemEntity.selected
         )
     }
-    private fun mapToCartItemEntity(cartItem: CartItem): CartItemEntity {
+    private fun mapToCartItemEntity(cartItem: CartItemEntity): CartItemEntity {
         return CartItemEntity(
             bookId = cartItem.bookId,
             bookTitle = cartItem.bookTitle,
@@ -42,7 +40,7 @@ class CartRepository(context: Context) {
         }
     }
 
-    suspend fun deleteCartItem(cartItem: CartItem) {
+    suspend fun deleteCartItem(cartItem: CartItemEntity) {
         withContext(Dispatchers.IO) {
             cartDao.delete(mapToCartItemEntity(cartItem))
         }
