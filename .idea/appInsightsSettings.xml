@@ -10,9 +10,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.project_pemob_techie" />
-                  <option name="mobileSdkAppId" value="1:912817102577:android:697aa6ef9541e1e1b05350" />
-                  <option name="projectId" value="techbook-6099b" />
-                  <option name="projectNumber" value="912817102577" />
+                  <option name="mobileSdkAppId" value="1:633956332365:android:fd97ccdf04d51d938f3d04" />
+                  <option name="projectId" value="techbook-f7669" />
+                  <option name="projectNumber" value="633956332365" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
