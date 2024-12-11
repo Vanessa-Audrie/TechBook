@@ -14,7 +14,7 @@ import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.ui.cart.CartItem
 import com.google.firebase.database.FirebaseDatabase
 
-class CartAdapter(
+/*class CartAdapter(
     private val context: Context,
     private var cartItems: MutableList<CartItem>,
     private val onSelectAllChange: (Boolean) -> Unit
@@ -133,4 +133,4 @@ class CartAdapter(
         }
         return result
     }
-}
+}*/

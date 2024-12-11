@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.ui.account.SessionManager
-import com.example.project_pemob_techie.ui.content.CartAdapter
+/*import com.example.project_pemob_techie.ui.content.CartAdapter
 import com.google.firebase.database.*
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -47,13 +47,13 @@ class CartActivity : AppCompatActivity() {
         recyclerViewCart = findViewById(R.id.viewCart)
         recyclerViewCart.layoutManager = LinearLayoutManager(this)
         cartItems = mutableListOf()
-        cartAdapter = CartAdapter(this, cartItems)
+        /*cartAdapter = CartAdapter(this, cartItems)*/
 
         progressBar = findViewById(R.id.progressBar2)
         recyclerViewCart.adapter = cartAdapter
 
         cartViewModel.cartItems.observe(this, { items ->
-            cartAdapter.updateCart(items)
+            /*cartAdapter.updateCart(items)*/
         })
 
         loadCartItems()
@@ -128,4 +128,4 @@ class CartActivity : AppCompatActivity() {
     private fun getUserIdFromSession(): String? {
         return SessionManager.getUserId(this)
     }
-}
+}*/
