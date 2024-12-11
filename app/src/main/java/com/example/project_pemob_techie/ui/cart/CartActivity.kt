@@ -1,5 +1,6 @@
 package com.example.project_pemob_techie.ui.cart
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -56,6 +57,7 @@ class CartActivity : AppCompatActivity() {
         })
 
         loadCartItems()
+
 
         val checkoutButton: Button = findViewById(R.id.button3)
         checkoutButton.setOnClickListener {
