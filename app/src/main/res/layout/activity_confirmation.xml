@@ -149,12 +149,12 @@
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+                    app:layout_constraintBottom_toTopOf="@+id/recyclerViewitem"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
+                    android:id="@+id/recyclerViewitem"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="8dp"

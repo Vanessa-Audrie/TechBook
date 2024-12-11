@@ -1,17 +1,15 @@
 package com.example.project_pemob_techie.ui.cart
 
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.ui.account.SessionManager
-import com.example.project_pemob_techie.ui.content.CartAdapter
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 class ConfirmationActivity : AppCompatActivity() {
 
@@ -21,39 +19,43 @@ class ConfirmationActivity : AppCompatActivity() {
     private lateinit var textViewAddress: TextView
     private lateinit var textViewTotalQuantity: TextView
     private lateinit var textViewTotalPrice: TextView
-    private lateinit var cartAdapter: CartAdapter
-    private lateinit var selectedItems: ArrayList<CartItem>
+    private lateinit var confAdapter: ConfirmationAdapter
+    private var selectedItems: MutableList<CartItem> = mutableListOf()
+    private lateinit var userId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirmation)
 
+        confirmationRecyclerView = findViewById(R.id.recyclerViewitem)
         textViewName = findViewById(R.id.textView34)
         textViewPhoneNumber = findViewById(R.id.textView35)
         textViewAddress = findViewById(R.id.textView36)
         textViewTotalQuantity = findViewById(R.id.textView45)
         textViewTotalPrice = findViewById(R.id.textView46)
-//        confirmationRecyclerView = findViewById(R.id.recyclerViewConfirmation)
 
-//        selectedItems = intent.getParcelableArrayListExtra("selectedItems") ?: ArrayList()
-
-        // Set up the RecyclerView to display the cart items
-//        cartAdapter = CartAdapter(this, selectedItems)
         confirmationRecyclerView.layoutManager = LinearLayoutManager(this)
-        confirmationRecyclerView.adapter = cartAdapter
 
-        loadShippingDetails()
-
-        calculateTotals()
-    }
-
-    private fun loadShippingDetails() {
-        val userId = SessionManager.getUserId(this)
-        if (userId.isNullOrEmpty()) {
-            textViewName.text = "User not logged in"
+        userId = SessionManager.getUserId(this) ?: run {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+            finish()
             return
         }
 
+        loadShippingDetails()
+
+        val isbnList = intent.getStringArrayListExtra("isbnList") ?: ArrayList()
+        if (isbnList.isNotEmpty()) {
+            loadSelectedItems(isbnList)
+        }
+
+        val backButton: ImageView = findViewById(R.id.imageView13)
+        backButton.setOnClickListener {
+            finish()
+        }
+    }
+
+    private fun loadShippingDetails() {
         val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("10/shipping/$userId")
 
@@ -75,16 +77,45 @@ class ConfirmationActivity : AppCompatActivity() {
         })
     }
 
-    private fun calculateTotals() {
-        var totalQuantity = 0
-        var totalPrice = 0.0
+    private fun loadSelectedItems(isbnList: ArrayList<String>) {
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .getReference("3/cart")
 
-        for (item in selectedItems) {
-            totalQuantity += item.quantity
-//            totalPrice += item.price * item.quantity
+        var loadedItemsCount = 0
+
+        val userId = SessionManager.getUserId(this) ?: return
+
+        isbnList.forEach { isbn ->
+            databaseRef.child(userId).child(isbn).get().addOnSuccessListener { snapshot ->
+                if (snapshot.exists()) {
+                    val bookTitle = snapshot.child("title").value.toString()
+                    val price = snapshot.child("price").value.toString()
+                    val image = snapshot.child("image").value.toString()
+                    val quantity = snapshot.child("quantity").value as Int
+
+                    val cartItem = CartItem(isbn, bookTitle, price, quantity, image)
+                    selectedItems.add(cartItem)
+                }
+
+                loadedItemsCount++
+
+                if (loadedItemsCount == isbnList.size) {
+                    updateRecyclerView()
+                }
+            }.addOnFailureListener {
+                Toast.makeText(this, "Failed to load item with ISBN $isbn", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
 
-        textViewTotalQuantity.text = "Total Quantity: $totalQuantity"
-        textViewTotalPrice.text = "Total Price: $totalPrice"
+    private fun updateRecyclerView() {
+        if (!::confAdapter.isInitialized) {
+            confAdapter = ConfirmationAdapter(this, selectedItems)
+            confirmationRecyclerView.adapter = confAdapter
+        } else {
+            confAdapter.selectedItems = selectedItems as ArrayList<CartItem>
+            confAdapter.notifyDataSetChanged()
+        }
     }
 }
+

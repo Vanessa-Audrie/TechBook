@@ -1,9 +1,9 @@
 package com.example.project_pemob_techie.ui.cart
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -16,6 +16,7 @@ import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.ui.account.SessionManager
 import com.example.project_pemob_techie.ui.content.CartAdapter
 import com.google.firebase.database.*
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class CartActivity : AppCompatActivity() {
@@ -26,7 +27,7 @@ class CartActivity : AppCompatActivity() {
     private lateinit var cartItems: MutableList<CartItem>
     private val cartViewModel: CartViewModel by viewModels()
     private lateinit var userId: String
-    private lateinit var cartRepository: CartRepository
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +38,6 @@ class CartActivity : AppCompatActivity() {
             finish()
             return
         }
-
         val backButton: ImageView = findViewById(R.id.imageView3)
         backButton.setOnClickListener {
             finish()
@@ -46,7 +46,7 @@ class CartActivity : AppCompatActivity() {
         recyclerViewCart = findViewById(R.id.viewCart)
         recyclerViewCart.layoutManager = LinearLayoutManager(this)
         cartItems = mutableListOf()
-        cartAdapter = CartAdapter(this, cartItems) { isChecked -> }
+        cartAdapter = CartAdapter(this, cartItems)
 
         progressBar = findViewById(R.id.progressBar2)
         recyclerViewCart.adapter = cartAdapter
@@ -55,42 +55,35 @@ class CartActivity : AppCompatActivity() {
             cartAdapter.updateCart(items)
         })
 
-        cartRepository = CartRepository(this)
-
         loadCartItems()
 
-        val selectAllCheckBox = findViewById<CheckBox>(R.id.checkBox2)
-        val checkoutButton = findViewById<Button>(R.id.button3)
-
-        selectAllCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            cartAdapter.selectAllItems(isChecked)
-        }
-
+        val checkoutButton: Button = findViewById(R.id.button3)
         checkoutButton.setOnClickListener {
-            val selectedItems = cartAdapter.getSelectedItems()
+            val selectedItems = cartAdapter.getSelectedItemISBNs()
+
             if (selectedItems.isNotEmpty()) {
-                lifecycleScope.launch {
-                    selectedItems.forEach { cartItem ->
-                        cartRepository.addCartItem(cartItem)
-                    }
-                }
-//                proceedToCheckout(selectedItems)
+                saveSelectedItemsLocally(selectedItems)
+                val intent = Intent(this, CheckoutActivity::class.java)
+                startActivity(intent)
             } else {
                 Toast.makeText(this, "No items selected", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
-//    private fun proceedToCheckout(selectedItems: List<CartItem>) {
-//        val intent = Intent(this, CheckoutActivity::class.java).apply {
-//            putParcelableArrayListExtra("selectedItems", ArrayList(selectedItems))
-//        }
-//        startActivity(intent)
-//    }
+    fun saveSelectedItemsLocally(items: List<String>) {
+        val sharedPreferences = getSharedPreferences("cartPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val json = Gson().toJson(items)
+        editor.putString("selectedItems", json)
+        editor.apply()
+    }
 
     private fun loadCartItems() {
         val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .getReference("3/cart/userId/$userId")
+            .getReference("3/cart/userId/$userId/")
+
         showLoading(true)
 
         cartRef.addValueEventListener(object : ValueEventListener {
@@ -103,7 +96,7 @@ class CartActivity : AppCompatActivity() {
                     val quantity = itemSnapshot.child("quantity").value as? Int ?: 1
 
                     if (bookTitle != null && price != null && image != null) {
-                        cartItems.add(CartItem(itemSnapshot.key ?: "", bookTitle, price, quantity))
+                        cartItems.add(CartItem(itemSnapshot.key ?: "", bookTitle, price, quantity, image))
                     }
                 }
 
@@ -134,4 +127,3 @@ class CartActivity : AppCompatActivity() {
         return SessionManager.getUserId(this)
     }
 }
-

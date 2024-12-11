@@ -4,62 +4,79 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.ui.account.SessionManager
+import com.google.common.reflect.TypeToken
 import com.google.firebase.database.FirebaseDatabase
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class CheckoutActivity : AppCompatActivity() {
+
+    private lateinit var selectedItems: List<CartItem>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shipping)
 
-        val selectedItems = intent.getParcelableArrayListExtra<CartItem>("selectedItems")
+        val selectedISBNs = loadSelectedItemISBNsLocally()
+        fetchSelectedItemsDetails(selectedISBNs)
 
-        val nameTextView = findViewById<TextView>(R.id.textView25)
-        val phoneNumberTextView = findViewById<TextView>(R.id.textView28)
-        val streetAddressTextView = findViewById<TextView>(R.id.textView29)
-        val postalCodeEditText = findViewById<EditText>(R.id.editTextText2)
         val saveButton = findViewById<Button>(R.id.button2)
-
         saveButton.setOnClickListener {
-            val name = nameTextView.text.toString().trim()
-            val phoneNumber = phoneNumberTextView.text.toString().trim()
-            val streetAddress = streetAddressTextView.text.toString().trim()
-            val postalCode = postalCodeEditText.text.toString().trim()
+            val name = findViewById<TextView>(R.id.textView25).text.toString().trim()
+            val phoneNumber = findViewById<TextView>(R.id.textView28).text.toString().trim()
+            val streetAddress = findViewById<TextView>(R.id.textView29).text.toString().trim()
+            val postalCode = findViewById<EditText>(R.id.editTextText2).text.toString().trim()
 
             if (validateInput(name, phoneNumber, streetAddress, postalCode)) {
-                saveShippingDetailsToFirebase(name, phoneNumber, streetAddress, postalCode, selectedItems)
+                saveShippingDetailsToFirebase(name, phoneNumber, streetAddress, postalCode)
+            }
+        }
+
+        val backButton: ImageView = findViewById(R.id.imageView11)
+        backButton.setOnClickListener {
+            finish()
+        }
+    }
+
+    private fun fetchSelectedItemsDetails(selectedISBNs: List<String>) {
+        val userId = SessionManager.getUserId(this) ?: return
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .getReference("3/cart/userId/$userId")
+
+        selectedItems = mutableListOf()
+
+        selectedISBNs.forEach { isbn ->
+            databaseRef.child(isbn).get().addOnSuccessListener { snapshot ->
+                snapshot?.getValue(CartItem::class.java)?.let { item ->
+                    (selectedItems as MutableList).add(item)
+                }
+            }.addOnFailureListener {
+                Toast.makeText(this, "Failed to fetch item details for ISBN: $isbn", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+
+    private fun loadSelectedItemISBNsLocally(): List<String> {
+        val sharedPreferences = getSharedPreferences("cartPrefs", MODE_PRIVATE)
+        val json = sharedPreferences.getString("selectedItemISBNs", "[]")
+        val type = object : TypeToken<List<String>>() {}.type
+        return Gson().fromJson(json, type)
+    }
+
     private fun validateInput(name: String, phoneNumber: String, streetAddress: String, postalCode: String): Boolean {
-        if (name.isEmpty() || phoneNumber.isEmpty() || streetAddress.isEmpty() || postalCode.isEmpty()) {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        if (!phoneNumber.startsWith("62")) {
-            Toast.makeText(this, "Phone number must start with 62", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
         return true
     }
 
-    private fun saveShippingDetailsToFirebase(name: String, phoneNumber: String, streetAddress: String, postalCode: String, selectedItems: ArrayList<CartItem>?) {
-        val userId = SessionManager.getUserId(this)
-        if (userId.isNullOrEmpty()) {
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
-            return
-        }
-
+    private fun saveShippingDetailsToFirebase(name: String, phoneNumber: String, streetAddress: String, postalCode: String) {
+        val userId = SessionManager.getUserId(this) ?: return
         val shippingDetails = mapOf(
             "name" to name,
             "phoneNumber" to phoneNumber,
@@ -67,50 +84,34 @@ class CheckoutActivity : AppCompatActivity() {
             "postalCode" to postalCode
         )
 
-        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .getReference("10/shipping/$userId")
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("10/shipping/$userId")
 
-        databaseRef.setValue(shippingDetails)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Shipping details saved successfully", Toast.LENGTH_SHORT).show()
-
-                val intent = Intent(this, ConfirmationActivity::class.java).apply {
-                    putParcelableArrayListExtra("selectedItems", selectedItems)
-                }
-                startActivity(intent)
-                finish()
-            }
-            .addOnFailureListener { error ->
-                Toast.makeText(this, "Failed to save shipping details: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
+        databaseRef.setValue(shippingDetails).addOnSuccessListener {
+            transferSelectedItemsToConfirmation(name, phoneNumber, streetAddress, postalCode)
+        }.addOnFailureListener {
+            Toast.makeText(this, "Failed to save shipping details", Toast.LENGTH_SHORT).show()
+        }
     }
+
+    private fun transferSelectedItemsToConfirmation(name: String, phoneNumber: String, streetAddress: String, postalCode: String) {
+        val intent = Intent(this, ConfirmationActivity::class.java).apply {
+            putExtra("name", name)
+            putExtra("phoneNumber", phoneNumber)
+            putExtra("streetAddress", streetAddress)
+            putExtra("postalCode", postalCode)
+
+            val selectedISBNs = loadSelectedItemISBNsLocally()
+
+            putStringArrayListExtra("isbnList", ArrayList(selectedISBNs))
+
+
+        }
+        startActivity(intent)
+    }
+
+
+
 }
 
 
-//    // CheckoutActivity.kt
-//    private fun saveOrderToFirebase(selectedItems: List<CartItem>) {
-//        val userId = SessionManager.getUserId(this)
-//        if (userId.isNullOrEmpty()) {
-//            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
-//            return
-//        }
-//
-//        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("orders/$userId")
-//        val orderMap = selectedItems.map {
-//            mapOf(
-//                "bookId" to it.bookId,
-//                "bookTitle" to it.bookTitle,
-//                "price" to it.price,
-//                "quantity" to it.quantity,
-//                "image" to it.image,
-//                "selected" to it.selected
-//            )
-//        }
-//
-//        databaseRef.push().setValue(orderMap).addOnCompleteListener {
-//            if (it.isSuccessful) {
-//                Toast.makeText(this, "Order placed successfully", Toast.LENGTH_SHORT).show()
-//            } else {
-//                Toast.makeText(this, "Failed to place order", Toast.LENGTH_SHORT).show()
-//            }
-//        }
+

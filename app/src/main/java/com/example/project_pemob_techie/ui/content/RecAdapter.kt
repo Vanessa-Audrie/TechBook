@@ -78,8 +78,8 @@ class RecAdapter(private var recommendations: List<BookResponse>) :
 
         holder.btnAddToCart.setOnClickListener {
             val cartItem = CartItem(
-                bookId = recommendation.isbn ?: "",
-                bookTitle = recommendation.book_title ?: "",
+                isbn = recommendation.isbn ?: "",
+                title = recommendation.book_title ?: "",
                 price = recommendation.price ?: "",
                 quantity = 1
             )
@@ -187,10 +187,10 @@ class RecAdapter(private var recommendations: List<BookResponse>) :
     private fun addToCart(context: Context, cartItem: CartItem) {
         val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("cart/userId/$userId")
-        val itemId = cartItem.bookId
+        val itemId = cartItem.isbn
         cartRef.child(itemId).setValue(cartItem)
             .addOnSuccessListener {
-                Toast.makeText(context, "${cartItem.bookTitle} added to cart", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "${cartItem.title} added to cart", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
                 Toast.makeText(context, "Failed to add to cart: ${it.message}", Toast.LENGTH_SHORT).show()

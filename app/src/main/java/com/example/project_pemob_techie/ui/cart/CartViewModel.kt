@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 
         fun addToCart(item: CartItem) {
             val currentCart = _cartItems.value ?: mutableListOf()
-            val existingItem = currentCart.find { it.bookId == item.bookId }
+            val existingItem = currentCart.find { it.isbn == item.isbn }
 
             if (existingItem != null) {
                 existingItem.quantity += item.quantity
