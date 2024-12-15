@@ -2,6 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.Project_Pemob_Techie" parent="Theme.MaterialComponents.Light.NoActionBar">
 <!--        <item name="android:windowBackground">@color/white</item>-->
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="colorPrimary">@color/black</item> <!-- Custom primary color -->
         <item name="colorPrimaryVariant">@color/yellow</item> <!-- Variant color if needed -->
@@ -26,11 +28,6 @@
     <style name="Theme.Project_Pemob_Techie.FullScreen" parent="Theme.AppCompat.Light.NoActionBar">
 <!--        <item name="android:windowFullscreen">false</item>-->
 <!--        <item name="android:windowTranslucentStatus">true</item>-->
-    </style>
-
-    <style name="Theme.Project_Pemob_Techie.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
     </style>
 
     <style name="TabLayoutTextStyle" parent="TextAppearance.Design.Tab">
