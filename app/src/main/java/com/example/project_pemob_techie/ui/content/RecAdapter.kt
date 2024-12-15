@@ -36,7 +36,7 @@ class RecAdapter(private var recommendations: List<BookResponse>) :
         val title: TextView = view.findViewById(R.id.recomTitle)
         val price: TextView = view.findViewById(R.id.price)
         val image: ImageView = view.findViewById(R.id.imageView)
-        val btnAddToCart: Button = view.findViewById(R.id.button)
+        val btnView: Button = view.findViewById(R.id.button)
     }
 
     private var filteredRecommendations = mutableListOf<BookResponse>()
@@ -62,9 +62,6 @@ class RecAdapter(private var recommendations: List<BookResponse>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val recommendation = recommendations[position]
-
-
-
         holder.title.text = recommendation.book_title ?: "No Title Available"
         holder.price.text = "Rp ${recommendation.price ?: "0"}"
 
@@ -76,14 +73,24 @@ class RecAdapter(private var recommendations: List<BookResponse>) :
             holder.image.setImageResource(R.drawable.error)
         }
 
-        holder.btnAddToCart.setOnClickListener {
-            val cartItem = CartItem(
-                isbn = recommendation.isbn ?: "",
-                title = recommendation.book_title ?: "",
-                price = recommendation.price ?: "",
-                quantity = 1
-            )
-            addToCart(holder.itemView.context, cartItem)
+        holder.btnView.setOnClickListener {v->
+            val context = v.context
+            val intent = Intent(context, BookDetails::class.java).apply {
+                putExtra("BOOK_TITLE", recommendation.book_title)
+                putExtra("BOOK_PRICE", recommendation.price)
+                putExtra("BOOK_IMG_PATH", recommendation.book_img?.let { imageString ->
+                    saveImageToFile(context, decodeImage(imageString), "book_image_${System.currentTimeMillis()}")
+                })
+                putExtra("BOOK_SYNOPSIS", recommendation.synopsis)
+                putExtra("BOOK_ISBN", recommendation.isbn)
+                putExtra("BOOK_AUTHOR", recommendation.author)
+                putExtra("BOOK_LANG", recommendation.language)
+                putExtra("BOOK_PAGES", recommendation.number_of_pages)
+                putExtra("BOOK_DATE", recommendation.published_date)
+                putExtra("BOOK_MASS", recommendation.mass)
+                putExtra("BOOK_PUBLISHER", recommendation.publisher)
+            }
+            context.startActivity(intent)
         }
 
 

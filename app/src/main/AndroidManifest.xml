@@ -72,6 +72,10 @@
 
         <activity android:name=".ui.cart.CheckoutActivity" />
         <activity android:name=".ui.cart.ConfirmationActivity" />
+        <activity android:name=".ui.cart.PaymentActivity"/>
+        <activity android:name=".ui.cart.PaymentUpload"/>
+        <activity android:name=".ui.cart.PaymentDone" />
+
 
         <activity
             android:name=".ui.splashscreen.SplashScreen"

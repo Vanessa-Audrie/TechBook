@@ -61,7 +61,7 @@
             android:layout_width="155dp"
             android:layout_height="35dp"
             android:layout_marginBottom="5dp"
-            android:text="Add To Cart"
+            android:text="View Item"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:background="@drawable/add_to_cart_button"

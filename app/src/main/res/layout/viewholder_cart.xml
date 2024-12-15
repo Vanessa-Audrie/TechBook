@@ -26,19 +26,24 @@
         app:layout_constraintStart_toEndOf="@+id/checkBox4"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
-
     <TextView
         android:id="@+id/textView20"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/montserrat_medium"
         android:text="Title"
         android:textColor="@color/black"
-        android:textSize="17dp"
+        android:textSize="17sp"
         app:layout_constraintStart_toEndOf="@+id/imageView9"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:lineSpacingExtra="4dp"
+        android:scrollHorizontally="false"
+        android:singleLine="false"/>
+
 
     <TextView
         android:id="@+id/textView21"

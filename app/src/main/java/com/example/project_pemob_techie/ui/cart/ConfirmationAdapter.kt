@@ -1,6 +1,5 @@
 package com.example.project_pemob_techie.ui.cart
 
-
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
@@ -36,9 +35,15 @@ class ConfirmationAdapter(
         holder.quantity.text = "Quantity: ${cartItem.quantity}"
 
         if (!cartItem.image.isNullOrEmpty()) {
-            val imageBytes = hexStringToByteArray(cartItem.image!!)
+            val imageBytes = if (cartItem.image!!.startsWith("data:image")) {
+                decodeBase64Image(cartItem.image!!)
+            } else {
+                hexStringToByteArray(cartItem.image!!)
+            }
             val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
             holder.bookImage.setImageBitmap(bitmap)
+        } else {
+            holder.bookImage.setImageResource(R.drawable.error)
         }
     }
 
@@ -49,10 +54,14 @@ class ConfirmationAdapter(
     private fun hexStringToByteArray(hex: String): ByteArray {
         val result = ByteArray(hex.length / 2)
         for (i in hex.indices step 2) {
-            val byte = hex.substring(i, i + 2).toInt(16).toByte()
-            result[i / 2] = byte
+            result[i / 2] = hex.substring(i, i + 2).toInt(16).toByte()
         }
         return result
     }
 
+    private fun decodeBase64Image(base64Image: String): ByteArray {
+        val base64String = base64Image.split(",").last()
+        return android.util.Base64.decode(base64String, android.util.Base64.DEFAULT)
+    }
 }
+

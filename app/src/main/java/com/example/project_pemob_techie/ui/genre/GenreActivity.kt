@@ -29,6 +29,11 @@ class GenreActivity : AppCompatActivity() {
 
         adapter = GenreAdapter(genres, ::onGenreClick)
         recyclerView.adapter = adapter
+
+        val backBtn = binding.imageView22
+        backBtn.setOnClickListener {
+            finish()
+        }
     }
 
     private fun onGenreClick(genre: String){

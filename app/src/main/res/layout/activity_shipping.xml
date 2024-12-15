@@ -34,8 +34,8 @@
         android:textColor="@color/gray"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/textView37"
-        app:layout_constraintTop_toBottomOf="@+id/textView37" />
+        app:layout_constraintStart_toStartOf="@id/textView29"
+        app:layout_constraintTop_toBottomOf="@+id/textView29" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout4"
@@ -193,7 +193,7 @@
         android:id="@+id/textInputLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="18dp"
         android:orientation="vertical"
         app:endIconDrawable="@drawable/chevron_down"
         app:endIconMode="custom"
@@ -203,6 +203,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView28">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/dropdown"
             android:layout_width="320dp"
             android:layout_height="45dp"
             android:background="@drawable/rounded_corner"
@@ -212,8 +213,8 @@
             android:padding="12dp"
             android:textColor="@android:color/black"
             android:textStyle="bold"
-            tools:layout_editor_absoluteX="47dp"
-            tools:layout_editor_absoluteY="224dp" />
+            app:layout_constraintStart_toStartOf="@id/textView28"
+            app:layout_constraintTop_toBottomOf="@id/textView28"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView

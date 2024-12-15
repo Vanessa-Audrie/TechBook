@@ -2,6 +2,7 @@ package com.example.project_pemob_techie.ui.content
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,16 +12,41 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_pemob_techie.R
+import com.example.project_pemob_techie.ui.account.SessionManager
 import com.example.project_pemob_techie.ui.cart.CartItem
+import com.example.project_pemob_techie.ui.cart.SQLiteHelper
 import com.google.firebase.database.FirebaseDatabase
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.text.NumberFormat
+import java.util.Locale
 
-/*class CartAdapter(
+class CartAdapter(
     private val context: Context,
     private var cartItems: MutableList<CartItem>,
-    private val onSelectAllChange: (Boolean) -> Unit
+    private val textView12: TextView,
+    private val textView13: TextView,
+    private val checkbox2: CheckBox
 ) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
 
-    private var selectAllChecked = false
+    private val selectedItems = mutableListOf<String>()
+    private lateinit var userId: String
+    private val dbHelper = SQLiteHelper(context)
+    private var totalQuantity = 0
+    private var totalPrice = 0.0
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            val itemsFromDb = dbHelper.getAllSelectedItems()
+            withContext(Dispatchers.Main) {
+                selectedItems.addAll(itemsFromDb)
+                notifyDataSetChanged()
+            }
+        }
+    }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val bookTitle: TextView = view.findViewById(R.id.textView20)
@@ -29,7 +55,7 @@ import com.google.firebase.database.FirebaseDatabase
         val btnIncrease: TextView = view.findViewById(R.id.textView22)
         val btnDecrease: TextView = view.findViewById(R.id.textView24)
         val btnDelete: ImageView = view.findViewById(R.id.imageView10)
-        val checkBox: CheckBox = view.findViewById(R.id.checkBox4)
+        val checkbox: CheckBox = view.findViewById(R.id.checkBox4)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -40,10 +66,10 @@ import com.google.firebase.database.FirebaseDatabase
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cartItem = cartItems[position]
-        holder.bookTitle.text = cartItem.bookTitle
+
+        holder.bookTitle.text = cartItem.title
         holder.bookPrice.text = "Rp ${cartItem.price}"
         holder.quantity.text = cartItem.quantity.toString()
-        holder.checkBox.isChecked = cartItem.selected
 
         if (!cartItem.image.isNullOrEmpty()) {
             val imageBytes = hexStringToByteArray(cartItem.image!!)
@@ -51,22 +77,24 @@ import com.google.firebase.database.FirebaseDatabase
             holder.itemView.findViewById<ImageView>(R.id.imageView9).setImageBitmap(bitmap)
         }
 
-        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
-            cartItem.selected = isChecked
-            notifySelectAllState()
+        userId = SessionManager.getUserId(context) ?: run {
+            Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show()
+            return
         }
 
         holder.btnIncrease.setOnClickListener {
             cartItem.quantity += 1
-            notifyItemChanged(position)
+            holder.quantity.text = cartItem.quantity.toString()
             updateCartInDatabase(cartItem)
+            notifyItemChanged(position)
         }
 
         holder.btnDecrease.setOnClickListener {
             if (cartItem.quantity > 1) {
                 cartItem.quantity -= 1
-                notifyItemChanged(position)
+                holder.quantity.text = cartItem.quantity.toString()
                 updateCartInDatabase(cartItem)
+                notifyItemChanged(position)
             } else {
                 Toast.makeText(context, "Quantity cannot be less than 1", Toast.LENGTH_SHORT).show()
             }
@@ -75,11 +103,41 @@ import com.google.firebase.database.FirebaseDatabase
         holder.btnDelete.setOnClickListener {
             removeItemFromCart(cartItem, position)
         }
+
+        holder.checkbox.setOnCheckedChangeListener(null) // Remove any previous listeners
+
+        holder.checkbox.isChecked = selectedItems.contains(cartItem.isbn)
+
+        holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
+            val price = cartItem.price?.toDoubleOrNull() ?: 0.0
+            if (isChecked) {
+                dbHelper.addSelectedItem(cartItem.isbn)
+                selectedItems.add(cartItem.isbn)
+
+                totalQuantity += cartItem.quantity
+                totalPrice += price * cartItem.quantity
+            } else {
+                dbHelper.removeSelectedItem(cartItem.isbn)
+                selectedItems.remove(cartItem.isbn)
+
+                totalQuantity -= cartItem.quantity
+                totalPrice -= price * cartItem.quantity
+            }
+
+            updateSelectAllCheckboxState()
+
+            textView12.text = "$totalQuantity"
+            val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
+            textView13.text = "Rp ${formatter.format(totalPrice)}"
+        }
     }
 
-    override fun getItemCount(): Int {
-        return cartItems.size
+    fun updateSelectAllCheckboxState() {
+        val selectAllChecked = selectedItems.size == cartItems.size
+        checkbox2.isChecked = selectAllChecked
     }
+
+    override fun getItemCount(): Int = cartItems.size
 
     fun updateCart(newItems: List<CartItem>) {
         cartItems = newItems.toMutableList()
@@ -87,39 +145,61 @@ import com.google.firebase.database.FirebaseDatabase
     }
 
     fun selectAllItems(selectAll: Boolean) {
-        cartItems.forEach { it.selected = selectAll }
+        totalQuantity = 0
+        totalPrice = 0.0
+
+        for (i in cartItems.indices) {
+            val cartItem = cartItems[i]
+            val price = cartItem.price?.toDoubleOrNull() ?: 0.0
+
+            if (selectAll) {
+                if (!selectedItems.contains(cartItem.isbn)) {
+                    selectedItems.add(cartItem.isbn)
+                    dbHelper.addSelectedItem(cartItem.isbn)
+                }
+                totalQuantity += cartItem.quantity
+                totalPrice += price * cartItem.quantity
+            } else {
+                if (selectedItems.contains(cartItem.isbn)) {
+                    selectedItems.remove(cartItem.isbn)
+                    dbHelper.removeSelectedItem(cartItem.isbn)
+                }
+            }
+        }
+
+        textView12.text = "$totalQuantity"
+        val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
+        textView13.text = "Rp ${formatter.format(totalPrice)}"
+
         notifyDataSetChanged()
     }
 
-    fun getSelectedItems(): List<CartItem> {
-        return cartItems.filter { it.selected }
-    }
-
-    private fun notifySelectAllState() {
-        selectAllChecked = cartItems.all { it.selected }
-        onSelectAllChange(selectAllChecked)
-    }
 
     private fun removeItemFromCart(cartItem: CartItem, position: Int) {
-        val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .getReference("3/cart/userId/${cartItem.bookId}")
+        if (position in cartItems.indices) {
+            val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/") // Update with your Firebase URL
+                .getReference("3/cart/userId/$userId/${cartItem.isbn}")
 
-        cartRef.removeValue()
-            .addOnSuccessListener {
-                Toast.makeText(context, "${cartItem.bookTitle} removed from cart", Toast.LENGTH_SHORT).show()
-                cartItems.removeAt(position)
-                notifyItemRemoved(position)
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Failed to remove item: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
+            cartRef.removeValue()
+                .addOnSuccessListener {
+                    cartItems.removeAt(position)
+                    notifyItemRemoved(position)
+                    Toast.makeText(context, "${cartItem.title} removed from cart", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(context, "Failed to remove item: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
     private fun updateCartInDatabase(cartItem: CartItem) {
-        val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .getReference("3/cart/userId/${cartItem.bookId}")
+        val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/") // Update with your Firebase URL
+            .getReference("3/cart/userId/$userId/${cartItem.isbn}")
 
         cartRef.setValue(cartItem)
+            .addOnSuccessListener {
+                Log.d("CartAdapter", "CartItem updated successfully in Firebase")
+            }
             .addOnFailureListener {
                 Toast.makeText(context, "Failed to update quantity: ${it.message}", Toast.LENGTH_SHORT).show()
             }
@@ -128,9 +208,9 @@ import com.google.firebase.database.FirebaseDatabase
     private fun hexStringToByteArray(hex: String): ByteArray {
         val result = ByteArray(hex.length / 2)
         for (i in hex.indices step 2) {
-            val byte = hex.substring(i, i + 2).toInt(16).toByte()
-            result[i / 2] = byte
+            result[i / 2] = hex.substring(i, i + 2).toInt(16).toByte()
         }
         return result
     }
-}*/
+}
+

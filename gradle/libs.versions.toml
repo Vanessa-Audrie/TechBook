@@ -25,6 +25,7 @@ legacySupportV4 = "1.0.0"
 identityJvm = "202411.1"
 retrofit = "2.9.0"
 roomCommon = "2.6.1"
+billing = "1.0.0-alpha11"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -54,6 +55,7 @@ androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support
 identity-jvm = { group = "com.android.identity", name = "identity-jvm", version.ref = "identityJvm" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
+billing = { group = "com.google.androidbrowserhelper", name = "billing", version.ref = "billing" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
