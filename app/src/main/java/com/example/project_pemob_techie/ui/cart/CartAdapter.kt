@@ -103,7 +103,7 @@ class CartAdapter(
         holder.btnDelete.setOnClickListener {
             removeItemFromCart(cartItem, position)
         }
-
+        holder.checkbox.isChecked = false
         holder.checkbox.setOnCheckedChangeListener(null) // Remove any previous listeners
 
         holder.checkbox.isChecked = selectedItems.contains(cartItem.isbn)

@@ -82,6 +82,7 @@
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:layout_width="320dp"
             android:layout_height="45dp"
+            android:id="@+id/dropdown2"
             android:background="@drawable/rounded_corner"
             android:backgroundTint="@color/graybox"
             android:fontFamily="@font/montserrat_medium"
