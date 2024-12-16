@@ -7,13 +7,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.project_pemob_techie.databinding.FragmentHistoryBinding
+import com.example.project_pemob_techie.ui.account.SessionManager
 import com.google.android.material.tabs.TabLayoutMediator
 
 class HistoryFragment : Fragment() {
 
     private var _binding: FragmentHistoryBinding? = null
-
     private val binding get() = _binding!!
+
+    private lateinit var userId: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,19 +24,22 @@ class HistoryFragment : Fragment() {
     ): View {
 
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        val adapter = HistoryPagerAdapter(this)
+        userId = SessionManager.getUserId(requireContext()) ?: run {
+            throw IllegalStateException("User not logged in")
+        }
+
+        val adapter = HistoryPagerAdapter(this, userId)
         binding.viewPager.adapter = adapter
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when (position) {
-                0 -> tab.text = "Completed"
-                1 -> tab.text = "Ongoing"
+                0 -> tab.text = "Ongoing"
+                1 -> tab.text = "Completed"
             }
         }.attach()
 
-        return root
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -43,13 +48,18 @@ class HistoryFragment : Fragment() {
     }
 }
 
-class HistoryPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+class HistoryPagerAdapter(fragment: Fragment, private val userId: String) : FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {
-        return when (position) {
-            0 -> CompletedFragment()
-            else -> OngoingFragment()
+        val fragment = when (position) {
+            0 -> OngoingFragment()
+            else -> CompletedFragment()
         }
+
+        fragment.arguments = Bundle().apply {
+            putString("USER_ID", userId)
+        }
+        return fragment
     }
 }

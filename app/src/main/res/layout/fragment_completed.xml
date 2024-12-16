@@ -9,7 +9,7 @@
         android:id="@+id/textCompletedEmpty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nothing to show here\nYou don't have completed orders"
+        android:text="Nothing to show here.\nYou don't have any completed orders."
         android:textSize="16sp"
         android:gravity="center"
         android:textColor="@color/gray"

@@ -69,12 +69,15 @@
             android:theme="@style/Theme.Project_Pemob_Techie.FullScreen" />
 
         <activity android:name=".ui.genre.GenreChoosedActivity" />
-
+        <activity android:name=".ui.content.Shipping" />
         <activity android:name=".ui.cart.CheckoutActivity" />
         <activity android:name=".ui.cart.ConfirmationActivity" />
         <activity android:name=".ui.cart.PaymentActivity"/>
         <activity android:name=".ui.cart.PaymentUpload"/>
         <activity android:name=".ui.cart.PaymentDone" />
+        <activity android:name=".ui.history.OngoingActivity"/>
+        <activity android:name=".ui.history.CompletedActivity" />
+        <activity android:name=".ui.history.RatingReviewActivity" />
 
 
         <activity

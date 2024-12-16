@@ -3,7 +3,6 @@ package com.example.project_pemob_techie.ui.cart
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -18,8 +17,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.util.*
-
 class PaymentUpload : AppCompatActivity() {
 
     private lateinit var imageViewProof: ImageView
@@ -55,7 +52,8 @@ class PaymentUpload : AppCompatActivity() {
             finish()
         }
 
-        transactionId = UUID.randomUUID().toString()
+        transactionId = "TR-" + generateTransactionId()
+
 
         databaseReference = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("6/transaction/$userId/$transactionId")
@@ -71,6 +69,13 @@ class PaymentUpload : AppCompatActivity() {
             finish()
         }
 
+    }
+
+    fun generateTransactionId(): String {
+        val chars = ('A'..'Z') + ('0'..'9')
+        return (1..7)
+            .map { chars.random() }
+            .joinToString("")
     }
 
     private fun selectImage() {
@@ -97,29 +102,45 @@ class PaymentUpload : AppCompatActivity() {
             Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
             return
         }
-        val base64Image = encodeImageToBase64(bitmap!!)
 
-        val paymentProof = mapOf(
-            "imageBase64" to base64Image
-        )
+        val shippingRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .getReference("10/shipping/$userId")
 
-        val transactionData = mapOf(
-            "timestamp" to System.currentTimeMillis(),
-            "totalAmount" to totalAmount,
-            "shippingFee" to shippingFee,
-            "payment_status" to false,
-            "shipping_status" to false,
-            "payment_proof" to paymentProof
-        )
+        shippingRef.get().addOnSuccessListener { snapshot ->
+            val streetAddress = snapshot.child("streetAddress").getValue(String::class.java) ?: ""
+            val city = snapshot.child("city").getValue(String::class.java) ?: ""
+            val postalCode = snapshot.child("postalCode").getValue(String::class.java) ?: ""
 
-        databaseReference.setValue(transactionData)
-            .addOnCompleteListener {
-                clearCartAndSQLite()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to save proof: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
+            val address = "$streetAddress, $city, $postalCode"
+
+            val base64Image = encodeImageToBase64(bitmap!!)
+
+            val paymentProof = mapOf(
+                "imageBase64" to base64Image
+            )
+
+            val transactionData = mapOf(
+                "timestamp" to System.currentTimeMillis(),
+                "totalAmount" to totalAmount,
+                "shippingFee" to shippingFee,
+                "payment_status" to false,
+                "shipping_status" to false,
+                "address" to address,
+                "payment_proof" to paymentProof
+            )
+
+            databaseReference.setValue(transactionData)
+                .addOnCompleteListener {
+                    clearCartAndSQLite()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Failed to save proof: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+        }.addOnFailureListener {
+            Toast.makeText(this, "Failed to fetch shipping address: ${it.message}", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     private fun encodeImageToBase64(bitmap: Bitmap): String {
         val resizedBitmap = resizeImage(bitmap, 1024, 1024)

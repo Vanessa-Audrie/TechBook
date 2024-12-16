@@ -190,17 +190,4 @@ class RecAdapter(private var recommendations: List<BookResponse>) :
             hexString.substring(i * 2, i * 2 + 2).toInt(16).toByte()
         }
     }
-
-    private fun addToCart(context: Context, cartItem: CartItem) {
-        val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .getReference("cart/userId/$userId")
-        val itemId = cartItem.isbn
-        cartRef.child(itemId).setValue(cartItem)
-            .addOnSuccessListener {
-                Toast.makeText(context, "${cartItem.title} added to cart", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Failed to add to cart: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
 }

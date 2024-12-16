@@ -16,7 +16,6 @@ import com.example.project_pemob_techie.ui.account.SessionManager
 import com.example.project_pemob_techie.ui.cart.CartItem
 import com.example.project_pemob_techie.ui.cart.SQLiteHelper
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,7 +42,7 @@ class CartAdapter(
             val itemsFromDb = dbHelper.getAllSelectedItems()
             withContext(Dispatchers.Main) {
                 selectedItems.addAll(itemsFromDb)
-                notifyDataSetChanged()
+                notifyDataSetChangedSafely()
             }
         }
     }
@@ -86,7 +85,7 @@ class CartAdapter(
             cartItem.quantity += 1
             holder.quantity.text = cartItem.quantity.toString()
             updateCartInDatabase(cartItem)
-            notifyItemChanged(position)
+            notifyItemChangedSafely(position)
         }
 
         holder.btnDecrease.setOnClickListener {
@@ -94,7 +93,7 @@ class CartAdapter(
                 cartItem.quantity -= 1
                 holder.quantity.text = cartItem.quantity.toString()
                 updateCartInDatabase(cartItem)
-                notifyItemChanged(position)
+                notifyItemChangedSafely(position)
             } else {
                 Toast.makeText(context, "Quantity cannot be less than 1", Toast.LENGTH_SHORT).show()
             }
@@ -103,9 +102,8 @@ class CartAdapter(
         holder.btnDelete.setOnClickListener {
             removeItemFromCart(cartItem, position)
         }
-        holder.checkbox.isChecked = false
-        holder.checkbox.setOnCheckedChangeListener(null) // Remove any previous listeners
 
+        holder.checkbox.setOnCheckedChangeListener(null)
         holder.checkbox.isChecked = selectedItems.contains(cartItem.isbn)
 
         holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
@@ -134,22 +132,23 @@ class CartAdapter(
 
     fun updateSelectAllCheckboxState() {
         val selectAllChecked = selectedItems.size == cartItems.size
-        checkbox2.isChecked = selectAllChecked
+        if (checkbox2.isChecked != selectAllChecked) {
+            checkbox2.isChecked = selectAllChecked
+        }
     }
 
     override fun getItemCount(): Int = cartItems.size
 
     fun updateCart(newItems: List<CartItem>) {
         cartItems = newItems.toMutableList()
-        notifyDataSetChanged()
+        notifyDataSetChangedSafely()
     }
 
     fun selectAllItems(selectAll: Boolean) {
         totalQuantity = 0
         totalPrice = 0.0
 
-        for (i in cartItems.indices) {
-            val cartItem = cartItems[i]
+        for (cartItem in cartItems) {
             val price = cartItem.price?.toDoubleOrNull() ?: 0.0
 
             if (selectAll) {
@@ -171,13 +170,12 @@ class CartAdapter(
         val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
         textView13.text = "Rp ${formatter.format(totalPrice)}"
 
-        notifyDataSetChanged()
+        notifyDataSetChangedSafely()
     }
-
 
     private fun removeItemFromCart(cartItem: CartItem, position: Int) {
         if (position in cartItems.indices) {
-            val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/") // Update with your Firebase URL
+            val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("3/cart/userId/$userId/${cartItem.isbn}")
 
             cartRef.removeValue()
@@ -193,7 +191,7 @@ class CartAdapter(
     }
 
     private fun updateCartInDatabase(cartItem: CartItem) {
-        val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/") // Update with your Firebase URL
+        val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("3/cart/userId/$userId/${cartItem.isbn}")
 
         cartRef.setValue(cartItem)
@@ -205,6 +203,18 @@ class CartAdapter(
             }
     }
 
+    private fun notifyDataSetChangedSafely() {
+        CoroutineScope(Dispatchers.Main).launch {
+            notifyDataSetChanged()
+        }
+    }
+
+    private fun notifyItemChangedSafely(position: Int) {
+        CoroutineScope(Dispatchers.Main).launch {
+            notifyItemChanged(position)
+        }
+    }
+
     private fun hexStringToByteArray(hex: String): ByteArray {
         val result = ByteArray(hex.length / 2)
         for (i in hex.indices step 2) {
@@ -213,4 +223,3 @@ class CartAdapter(
         return result
     }
 }
-

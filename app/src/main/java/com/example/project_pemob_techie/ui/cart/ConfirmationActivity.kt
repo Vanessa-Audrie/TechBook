@@ -32,6 +32,8 @@ class ConfirmationActivity : AppCompatActivity() {
     private lateinit var userId: String
     private val dbHelper by lazy { SQLiteHelper(this) }
 
+    private var totalQuantity = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirmation)
@@ -110,7 +112,6 @@ class ConfirmationActivity : AppCompatActivity() {
         val updatedItems = mutableListOf<CartItem>()
         val totalItems = selectedItems.size
         var itemsLoaded = 0
-        var totalQuantity = 0
         var totalPrice = 0.0
 
         selectedItems.forEach { isbn ->
@@ -139,7 +140,7 @@ class ConfirmationActivity : AppCompatActivity() {
                         if (itemsLoaded == totalItems) {
 
                             updateRecyclerView(updatedItems)
-                            updateTotals(totalQuantity, totalPrice)
+                            updateTotals(totalQuantity, totalPrice, 0.0)
                         }
                     } catch (e: Exception) {
                         Log.e("ConfirmationActivity", "Error loading item data: ${e.message}", e)
@@ -192,6 +193,15 @@ class ConfirmationActivity : AppCompatActivity() {
                 val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
                 textView47.text = "Rp ${formatter.format(shippingFee)}"
 
+                val totalPriceText = textViewTotalPrice.text.toString()
+                val cleanedTotalPriceText = totalPriceText.replace("[^\\d]".toRegex(), "")
+                val totalPrice = if (cleanedTotalPriceText.isNotEmpty()) {
+                    cleanedTotalPriceText.toDoubleOrNull() ?: 0.0
+                } else {
+                    0.0
+                }
+
+                updateTotals(totalQuantity, totalPrice, shippingFee)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -199,6 +209,7 @@ class ConfirmationActivity : AppCompatActivity() {
             }
         })
     }
+
 
     private fun updateRecyclerView(updatedItems: List<CartItem>) {
         if (!::confAdapter.isInitialized) {
@@ -210,18 +221,12 @@ class ConfirmationActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateTotals(totalQuantity: Int, totalPrice: Double) {
+    private fun updateTotals(totalQuantity: Int, totalPrice: Double, shippingFee: Double) {
         val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
         textViewTotalQuantity.text = "$totalQuantity"
         textViewTotalPrice.text = "Rp ${formatter.format(totalPrice)}"
-        val shippingFeeText = textView47.text.toString()
-        val cleanedShippingFeeText = shippingFeeText.replace("[^\\d]".toRegex(), "")
-        val shippingFee = if (cleanedShippingFeeText.isNotEmpty()) {
-            cleanedShippingFeeText.toDoubleOrNull() ?: 0.0
-        } else {
-            0.0
-        }
         val totalAmount = totalPrice + shippingFee
         TotalamountTextview.text = "Rp ${formatter.format(totalAmount)}"
     }
+
 }

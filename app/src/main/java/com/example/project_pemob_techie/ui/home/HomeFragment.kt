@@ -1,10 +1,7 @@
 package com.example.project_pemob_techie.ui.home
 
 import android.content.Intent
-import android.media.Image
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +9,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -72,7 +67,7 @@ class HomeFragment : Fragment() {
         database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("2/data/")
 
-        database.limitToFirst(10).addValueEventListener(object : ValueEventListener {
+        database.limitToFirst(2).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 recommendations.clear()
                 for (dataSnapshot in snapshot.children) {
