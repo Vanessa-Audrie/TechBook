@@ -5,38 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView37"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="266dp"
-        android:fontFamily="@font/montserrat_medium"
-        android:text="Postal Code"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
-        app:layout_constraintStart_toStartOf="@+id/textView29"
-        app:layout_constraintTop_toBottomOf="@+id/textView29" />
-
-    <EditText
-        android:id="@+id/editTextText2"
-        android:layout_width="320dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_corner"
-        android:backgroundTint="@color/graybox"
-        android:fontFamily="@font/montserrat_medium"
-        android:hint="Enter Postal Code"
-        android:inputType="text"
-        android:padding="12dp"
-        android:textColor="@color/gray"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/textView29"
-        app:layout_constraintTop_toBottomOf="@+id/textView29" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout4"
         android:layout_width="match_parent"
@@ -180,7 +148,7 @@
         android:background="@drawable/rounded_corner"
         android:backgroundTint="@color/graybox"
         android:fontFamily="@font/montserrat_medium"
-        android:hint="+62 |"
+        android:hint="62 ..."
         android:inputType="phone"
         android:padding="12dp"
         android:textColor="@color/gray"
@@ -212,7 +180,6 @@
             android:hint="Select City"
             android:padding="12dp"
             android:textColor="@android:color/black"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/textView28"
             app:layout_constraintTop_toBottomOf="@id/textView28"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -248,6 +215,36 @@
         app:layout_constraintTop_toBottomOf="@id/textView30" />
 
 
+    <TextView
+        android:id="@+id/textView37"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="266dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="Postal Code"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/textView29"
+        app:layout_constraintTop_toBottomOf="@+id/textView29" />
+
+    <EditText
+        android:id="@+id/editTextText2"
+        android:layout_width="320dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_corner"
+        android:backgroundTint="@color/graybox"
+        android:fontFamily="@font/montserrat_medium"
+        android:hint="Enter Postal Code"
+        android:inputType="text"
+        android:padding="12dp"
+        android:textColor="@color/gray"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/textView37"
+        app:layout_constraintTop_toBottomOf="@id/textView37" />
 
     <Button
         android:id="@+id/button2"
@@ -256,6 +253,10 @@
         android:layout_marginBottom="16dp"
         android:text="Confirm"
         android:textAllCaps="false"
+        android:background="@drawable/add_to_cart_button"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

@@ -82,7 +82,7 @@
 
                 <TextView
                     android:id="@+id/textView36"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/montserrat_medium"
@@ -279,6 +279,10 @@
             android:layout_marginBottom="16dp"
             android:text="Confirm"
             android:textAllCaps="false"
+            android:background="@drawable/add_to_cart_button"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

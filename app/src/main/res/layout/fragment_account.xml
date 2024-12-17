@@ -32,13 +32,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/account_white" />
-
-        <ImageView
+        
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageView30"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginTop="115dp"
-            android:background="@drawable/profile_circle"
+            app:shapeAppearanceOverlay="@style/RoundPicture"
             android:scaleType="centerCrop"
             android:src="@drawable/profile"
             app:layout_constraintEnd_toEndOf="parent"
@@ -51,20 +51,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/montserrat_bold"
-            android:text="Name"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="23sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imageView30" />
 
-
         <TextView
             android:id="@+id/textView65"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_medium"
-            android:text="Username"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="@+id/textView61"
@@ -74,10 +73,13 @@
         <Button
             android:id="@+id/button9"
             android:layout_width="320dp"
-            android:layout_height="60dp"
-            android:layout_marginBottom="64dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="74dp"
             android:text="Logout"
+            style="@style/RoundedButton"
+            android:textColor="@android:color/white"
             android:textAllCaps="false"
+            android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.494"
@@ -86,10 +88,13 @@
         <Button
             android:id="@+id/button10"
             android:layout_width="320dp"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_marginBottom="12dp"
             android:text="Change Password"
             android:textAllCaps="false"
+            style="@style/RoundedButton"
+            android:textSize="15sp"
+            android:textColor="@android:color/white"
             app:layout_constraintBottom_toTopOf="@+id/button9"
             app:layout_constraintEnd_toEndOf="@+id/button9"
             app:layout_constraintHorizontal_bias="1.0"

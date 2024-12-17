@@ -8,24 +8,24 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.project_pemob_techie.ui.home.HomeFragment"
-        android:label="@string/title_home"
+        android:label=""
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_wishlist"
         android:name="com.example.project_pemob_techie.ui.wishlist.WishlistFragment"
-        android:label="@string/title_wishlist"
+        android:label=""
         tools:layout="@layout/fragment_wishlist" />
 
     <fragment
         android:id="@+id/navigation_history"
         android:name="com.example.project_pemob_techie.ui.history.HistoryFragment"
-        android:label="@string/title_history"
+        android:label=""
         tools:layout="@layout/fragment_history" />
 
     <fragment
         android:id="@+id/navigation_account"
         android:name="com.example.project_pemob_techie.ui.account.AccountFragment"
-        android:label="@string/title_account"
+        android:label=""
         tools:layout="@layout/fragment_account" />
 </navigation>
