@@ -99,7 +99,7 @@ class RatingReviewsFragment : Fragment() {
                                     userNames[userId] = userName
 
                                     val formattedTimestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(timestamp))
-                                    allReviews.add(RatingAdapter.Review(rating, review, userNames[userId] ?: "Unknown User", formattedTimestamp))
+                                    allReviews.add(RatingAdapter.Review(userId, rating, review, userNames[userId] ?: "Unknown User", formattedTimestamp))
 
                                     val firstThreeReviews = if (allReviews.size > 3) allReviews.take(3) else allReviews
                                     adapter = RatingAdapter(firstThreeReviews)
@@ -108,7 +108,7 @@ class RatingReviewsFragment : Fragment() {
                                     if (totalReviews > 0) {
                                         val averageRating = totalRating.toFloat() / totalReviews
                                         val averageTextView: TextView = requireView().findViewById(R.id.textView8)
-                                        averageTextView.text = String.format(Locale.getDefault(), "%.1f", averageRating, "/5.0")
+                                        averageTextView.text = String.format(Locale.getDefault(), "%.1f/5.0", averageRating)
                                     }
                                 }
                         }

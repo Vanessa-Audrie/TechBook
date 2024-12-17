@@ -253,7 +253,11 @@ class BookDetails : AppCompatActivity() {
                         }
                     }
                 }
-                purchaseCountTextView.text = "($totalQuantity has been bought)"
+                if (totalQuantity == 1) {
+                    purchaseCountTextView.text = "(Sold $totalQuantity piece)"
+                } else {
+                    purchaseCountTextView.text = "(Sold $totalQuantity pieces)"
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {

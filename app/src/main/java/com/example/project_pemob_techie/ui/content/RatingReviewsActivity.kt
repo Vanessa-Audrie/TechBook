@@ -72,7 +72,7 @@ class RatingReviewsActivity : AppCompatActivity() {
                                     userNames[userId] = userName
 
                                     val formattedTimestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(timestamp))
-                                    allReviews.add(RatingAdapter.Review(rating, review, userName, formattedTimestamp))
+                                    allReviews.add(RatingAdapter.Review(userId, rating, review, userName, formattedTimestamp))
 
                                     updateUI(allReviews, totalRating, totalReviews)
                                 }

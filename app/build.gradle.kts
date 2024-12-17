@@ -74,4 +74,5 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:23.1.0")
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 }
