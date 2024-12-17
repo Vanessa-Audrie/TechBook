@@ -8,7 +8,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 class BookDetailsPagerAdapter(
     activity: AppCompatActivity,
     private val synopsis: String,
-    private val bookDetails: Map<String, String>
+    private val bookDetails: Map<String, String>,
+    private val bookISBN: String
 ) : FragmentStateAdapter(activity) {
 
     override fun getItemCount(): Int = 3
@@ -17,7 +18,7 @@ class BookDetailsPagerAdapter(
         return when (position) {
             0 -> DescriptionFragment.newInstance(synopsis)
             1 -> DetailsFragment.newInstance(bookDetails)
-            2 -> RatingReviewsFragment()
+            2 -> RatingReviewsFragment.newInstance(bookISBN)
             else -> DescriptionFragment.newInstance(synopsis)
         }
     }

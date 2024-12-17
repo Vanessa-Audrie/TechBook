@@ -4,6 +4,6 @@
     <string name="title_wishlist">Wishlist</string>
     <string name="title_history">History</string>
     <string name="title_account">Account</string>
-    <string name="firebase_database_url">https://techbook-techie-20954-default-rtdb.firebaseio.com/</string>
+    <string name="firebase_database_url"></string>
 
 </resources>

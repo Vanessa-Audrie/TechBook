@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,6 +17,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -45,9 +50,16 @@ class OngoingActivity : AppCompatActivity() {
 
         binding.tvOrderTitle.text = "$transactionId"
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        })
+
         binding.imageView3.setOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
+
         fetchTransactionSummary(transactionId!!)
         fetchTransactionDetails(transactionId!!)
 
@@ -217,35 +229,48 @@ class OngoingActivity : AppCompatActivity() {
                         val email = userSnapshot.child("email").getValue(String::class.java)
 
                         if (email != null) {
-                            val url = URL("https://hook.us2.make.com/xyppeeiv1axnd6m7agifqojxh5pxwu36")
-                            val connection = url.openConnection() as HttpURLConnection
-                            connection.requestMethod = "POST"
-                            connection.setRequestProperty("Content-Type", "application/json")
-                            connection.doOutput = true
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    val url = URL("https://hook.us2.make.com/xyppeeiv1axnd6m7agifqojxh5pxwu36")
+                                    val connection = url.openConnection() as HttpURLConnection
+                                    connection.requestMethod = "POST"
+                                    connection.setRequestProperty("Content-Type", "application/json")
+                                    connection.doOutput = true
 
-                            val jsonInputString = """
-                        {
-                            "idToken": "$idToken",
-                            "transactionId": "$transactionId",
-                            "userId": "$userId",
-                            "timestamp": "$timestamp",
-                            "totalAmount": "${binding.tvTotalsValue.text}",
-                            "shippingFee": "${binding.tvShippingFeeValue.text}",
-                            "items": ${prepareItemsList()},
-                            "email": "$email"
-                        }
-                        """
+                                    val jsonInputString = """
+                                    {
+                                        "idToken": "$idToken",
+                                        "transactionId": "$transactionId",
+                                        "userId": "$userId",
+                                        "timestamp": "$timestamp",
+                                        "totalAmount": "${binding.tvTotalsValue.text}",
+                                        "shippingFee": "${binding.tvShippingFeeValue.text}",
+                                        "items": ${prepareItemsList()},
+                                        "email": "$email"
+                                    }
+                                """
 
-                            OutputStreamWriter(connection.outputStream).apply {
-                                write(jsonInputString)
-                                flush()
-                            }
+                                    OutputStreamWriter(connection.outputStream).apply {
+                                        write(jsonInputString)
+                                        flush()
+                                    }
 
-                            val responseCode = connection.responseCode
-                            if (responseCode == HttpURLConnection.HTTP_OK) {
-                                Log.d("HTTP Response", "Sent data successfully")
-                            } else {
-                                Log.e("HTTP Response", "Error sending data")
+                                    val responseCode = connection.responseCode
+                                    withContext(Dispatchers.Main) {
+                                        if (responseCode == HttpURLConnection.HTTP_OK) {
+                                            Log.d("HTTP Response", "Sent data successfully")
+                                            Toast.makeText(this@OngoingActivity, "Data sent successfully", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            Log.e("HTTP Response", "Error sending data")
+                                            Toast.makeText(this@OngoingActivity, "Failed to send data", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    withContext(Dispatchers.Main) {
+                                        Log.e("NetworkError", e.message ?: "Unknown error")
+                                        Toast.makeText(this@OngoingActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
                             }
                         } else {
                             Toast.makeText(this@OngoingActivity, "Failed to fetch email", Toast.LENGTH_SHORT).show()
@@ -263,6 +288,7 @@ class OngoingActivity : AppCompatActivity() {
             }
         })
     }
+
 
 
     private fun prepareItemsList(): String {

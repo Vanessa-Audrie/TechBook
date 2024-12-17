@@ -2,6 +2,7 @@ package com.example.project_pemob_techie.ui.history
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_pemob_techie.databinding.ActivityInsertRatingBinding
@@ -37,8 +38,14 @@ class RatingReviewActivity : AppCompatActivity() {
             return
         }
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        })
+
         binding.imageView3.setOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         setupRecyclerView()

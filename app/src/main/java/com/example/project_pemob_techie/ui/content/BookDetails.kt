@@ -103,7 +103,9 @@ class BookDetails : AppCompatActivity() {
         val tabLayout: TabLayout = findViewById(R.id.tabbedLayout)
         val viewPager: ViewPager2 = findViewById(R.id.viewPager)
 
-        val adapter = BookDetailsPagerAdapter(this, bookSynopsis ?: "No synopsis", bookDetails)
+        val adapter = BookDetailsPagerAdapter(this, bookSynopsis ?: "No synopsis", bookDetails,
+            bookISBN!!
+        )
         viewPager.adapter = adapter
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
