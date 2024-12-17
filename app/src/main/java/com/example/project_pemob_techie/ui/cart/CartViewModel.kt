@@ -23,14 +23,22 @@ class CartViewModel : ViewModel() {
                     val bookTitle = itemSnapshot.child("title").value as? String
                     val price = itemSnapshot.child("price").value as? String
                     val image = itemSnapshot.child("image").value as? String
-                    val quantity = itemSnapshot.child("quantity").value as? Int ?: 1
 
-                    if (bookTitle != null && price != null && image != null) {
+                    val quantityRaw = itemSnapshot.child("quantity").value
+                    val quantity = when (quantityRaw) {
+                        is Long -> quantityRaw.toInt()
+                        is String -> quantityRaw.toIntOrNull() ?: 0
+                        is Int -> quantityRaw
+                        else -> 0
+                    }
+
+                    if (bookTitle != null && price != null && image != null && quantity > 0) {
                         cartItems.add(CartItem(itemSnapshot.key ?: "", bookTitle, price, quantity, image))
                     }
                 }
                 _cartItems.postValue(cartItems)
             }
+
 
             override fun onCancelled(error: DatabaseError) {
                 Log.e("CartViewModel", "Failed to load cart", error.toException())
