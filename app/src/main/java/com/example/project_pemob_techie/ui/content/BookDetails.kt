@@ -73,8 +73,8 @@ class BookDetails : AppCompatActivity() {
         val bookPublisher = intent.getStringExtra("BOOK_PUBLISHER")
         bookTitleTextView.text = bookTitle ?: "No Title Available"
         val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
-        val bookPrice = intent.getStringExtra("BOOK_PRICE")?.toDoubleOrNull()
-        bookPriceTextView.text = "Rp ${formatter.format(bookPrice)}"
+        val bookPrice = intent.getStringExtra("BOOK_PRICE")
+        bookPriceTextView.text = "Rp $bookPrice"
 
         if (!bookImagePath.isNullOrEmpty()) {
             val file = File(bookImagePath)

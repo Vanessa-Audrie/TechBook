@@ -54,13 +54,13 @@ class CartActivity : AppCompatActivity() {
 
         checkbox2 = findViewById(R.id.checkBox2)
         recyclerViewCart = findViewById(R.id.viewCart)
-        recyclerViewCart.layoutManager = LinearLayoutManager(this)
         textView12 = findViewById(R.id.textView12)
         textView13 = findViewById(R.id.textView13)
 
         cartAdapter = CartAdapter(this, mutableListOf(), textView12, textView13, checkbox2)
 
         progressBar = findViewById(R.id.progressBar2)
+        recyclerViewCart.layoutManager = LinearLayoutManager(this)
         recyclerViewCart.adapter = cartAdapter
 
         checkbox2.setOnCheckedChangeListener { _, isChecked ->

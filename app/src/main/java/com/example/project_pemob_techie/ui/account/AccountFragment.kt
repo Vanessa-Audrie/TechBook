@@ -1,18 +1,20 @@
 package com.example.project_pemob_techie.ui.account
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.FragmentAccountBinding
 import com.example.project_pemob_techie.ui.login.Login
-import com.example.project_pemob_techie.ui.login.VerifyEmail
 import com.example.project_pemob_techie.ui.login.VerifyEmail_ChangePW
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import java.net.URL
 
 class AccountFragment : Fragment() {
 
@@ -28,6 +30,7 @@ class AccountFragment : Fragment() {
         _binding = FragmentAccountBinding.inflate(inflater, container, false)
         val root: View = binding.root
         database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("techbook_techie/")
+
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             database.child("user").child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
@@ -39,6 +42,7 @@ class AccountFragment : Fragment() {
                         val phone = snapshot.child("phone").value.toString()
                         val birthday = snapshot.child("birthday").value.toString()
                         val language = "English"
+                        val profileImageBase64 = snapshot.child("profileImageUrl").value.toString()  // Base64 string
 
                         binding.textView61.text = name
                         binding.textView65.text = username
@@ -46,10 +50,27 @@ class AccountFragment : Fragment() {
                         binding.textView79.text = phone
                         binding.textView80.text = birthday
                         binding.textView81.text = language
+
+                        if (profileImageBase64.isNotEmpty()) {
+                            try {
+                                val decodedString = android.util.Base64.decode(profileImageBase64, android.util.Base64.DEFAULT)
+                                val bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+
+                                binding.imageView30.setImageBitmap(bitmap)
+                            } catch (e: Exception) {
+                                binding.imageView30.setImageResource(R.drawable.profile)
+                                e.printStackTrace()
+                            }
+                        } else {
+                            binding.imageView30.setImageResource(R.drawable.profile)
+                        }
                     } else {
                         Toast.makeText(requireContext(), "User data not found", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+
+
                 override fun onCancelled(error: DatabaseError) {
                     Toast.makeText(requireContext(), "Error: ${error.message}", Toast.LENGTH_SHORT).show()
                 }
@@ -57,6 +78,7 @@ class AccountFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
         }
+
         binding.imageView31.setOnClickListener {
             val intent = Intent(requireContext(), EditProfileActivity::class.java)
             startActivity(intent)
@@ -88,4 +110,3 @@ class AccountFragment : Fragment() {
         _binding = null
     }
 }
-

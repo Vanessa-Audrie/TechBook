@@ -54,7 +54,6 @@ class PaymentUpload : AppCompatActivity() {
 
         transactionId = "TR-" + generateTransactionId()
 
-
         databaseReference = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("6/transaction/$userId/$transactionId")
 
@@ -62,14 +61,20 @@ class PaymentUpload : AppCompatActivity() {
             selectImage()
         }
 
-        submitButton.setOnClickListener {
-            uploadProof(totalAmount, shippingFee)
-            val intent = Intent(this, PaymentDone::class.java)
-            startActivity(intent)
-            finish()
-        }
+        submitButton.isEnabled = false
 
+        submitButton.setOnClickListener {
+            if (bitmap == null) {
+                Toast.makeText(this, "Please upload a picture", Toast.LENGTH_SHORT).show()
+            } else {
+                uploadProof(totalAmount, shippingFee)
+                val intent = Intent(this, PaymentDone::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
     }
+
 
     fun generateTransactionId(): String {
         val chars = ('A'..'Z') + ('0'..'9')
@@ -91,11 +96,14 @@ class PaymentUpload : AppCompatActivity() {
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
                 imageViewProof.setImageBitmap(bitmap)
+
+                submitButton.isEnabled = true
             } catch (e: IOException) {
                 Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 
     private fun uploadProof(totalAmount: Double, shippingFee: Double) {
         if (bitmap == null) {
