@@ -84,6 +84,8 @@
         android:backgroundTint="@color/yellow"
         android:text="Select image"
         android:textAllCaps="false"
+        android:background="@drawable/add_to_cart_button"
+        android:textStyle="bold"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -108,13 +110,15 @@
         android:id="@+id/button6"
         android:layout_width="320dp"
         android:layout_height="60dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/add_to_cart_button"
         android:backgroundTint="@color/yellow"
         android:text="Confirm"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        app:layout_constraintTop_toBottomOf="@+id/button8"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@id/button8"
-        app:layout_constraintStart_toStartOf="@id/button8" />
+        app:layout_constraintStart_toStartOf="@id/button8"
+        app:layout_constraintTop_toBottomOf="@+id/button8" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,7 +9,6 @@
         android:id="@+id/imageView33"
         android:layout_width="100dp"
         android:layout_height="120dp"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,12 +18,12 @@
 
     <TextView
         android:id="@+id/textView64"
-        android:layout_width="200dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="Title"
         android:fontFamily="@font/montserrat_medium"
+        android:text="Title"
         android:textColor="@color/gray"
         android:textSize="15sp"
         android:textStyle="bold"

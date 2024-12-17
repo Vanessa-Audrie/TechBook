@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent">
 
 
-    <ImageView
-        android:id="@+id/cartHistory"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="19dp"
-        android:layout_marginEnd="24dp"
-        android:src="@drawable/baseline_shopping_cart_24"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView82"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/montserrat_medium"
+            android:padding="2dp"
+            android:text="History"
+            android:textColor="@color/midgray"
+            android:textSize="18dp" />
+
+        <ImageView
+            android:id="@+id/cartHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:layout_weight="0"
+            android:src="@drawable/baseline_shopping_cart_24" />
+    </LinearLayout>
 
 
     <com.google.android.material.tabs.TabLayout
@@ -21,13 +46,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout2"
         app:tabIndicatorColor="@color/yellow"
         app:tabIndicatorHeight="3dp"
         app:tabSelectedTextColor="@color/black"
-        app:tabTextColor="@color/gray"
-        app:layout_constraintTop_toBottomOf="@id/cartHistory"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:tabTextColor="@color/gray" />
 
 
     <androidx.viewpager2.widget.ViewPager2

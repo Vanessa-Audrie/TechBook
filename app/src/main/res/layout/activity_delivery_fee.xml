@@ -89,7 +89,6 @@
             android:hint="Select City"
             android:padding="12dp"
             android:textColor="@android:color/black"
-            android:textStyle="bold"
             tools:layout_editor_absoluteX="47dp"
             tools:layout_editor_absoluteY="224dp" />
     </com.google.android.material.textfield.TextInputLayout>
