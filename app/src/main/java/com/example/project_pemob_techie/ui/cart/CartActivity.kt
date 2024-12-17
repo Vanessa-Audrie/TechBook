@@ -11,14 +11,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.ui.account.SessionManager
 import com.example.project_pemob_techie.ui.content.CartAdapter
-import com.google.firebase.database.*
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,6 +33,7 @@ class CartActivity : AppCompatActivity() {
 
     private lateinit var textView12: TextView
     private lateinit var textView13: TextView
+    private lateinit var tvStatus: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +54,7 @@ class CartActivity : AppCompatActivity() {
         recyclerViewCart = findViewById(R.id.viewCart)
         textView12 = findViewById(R.id.textView12)
         textView13 = findViewById(R.id.textView13)
+        tvStatus = findViewById(R.id.tvstatus)
 
         cartAdapter = CartAdapter(this, mutableListOf(), textView12, textView13, checkbox2)
 
@@ -69,6 +68,7 @@ class CartActivity : AppCompatActivity() {
 
         cartViewModel.cartItems.observe(this, { items ->
             cartAdapter.updateCart(items)
+            updateTvStatusVisibility(items.isEmpty())
         })
 
         cartViewModel.loadCartItems(userId)
@@ -89,9 +89,12 @@ class CartActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateTvStatusVisibility(isCartEmpty: Boolean) {
+        tvStatus.visibility = if (isCartEmpty) View.VISIBLE else View.GONE
+    }
+
     private fun getUserIdFromSession(): String? {
         return SessionManager.getUserId(this)
     }
 }
-
 

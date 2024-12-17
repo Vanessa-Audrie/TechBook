@@ -34,6 +34,8 @@ class RatingReviewsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: RatingAdapter
+    private lateinit var tvReviewStatus: TextView
+    private lateinit var button14: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +49,8 @@ class RatingReviewsFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerView2)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        tvReviewStatus = view.findViewById(R.id.tvReviewStatus)
+        button14 = view.findViewById(R.id.button14)
 
         val isbn = arguments?.getString(BOOK_ISBN_KEY)
         if (isbn != null) {
@@ -71,6 +75,17 @@ class RatingReviewsFragment : Fragment() {
     private fun fetchRatingsAndReviews(isbn: String) {
         val database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("5/rating_reviews/$isbn")
+
+        database.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val snapshot = task.result
+                if (!snapshot.exists()) {
+                    updateVisibility()
+                }
+            } else {
+                Toast.makeText(requireContext(), "Failed to fetch data", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -120,5 +135,10 @@ class RatingReviewsFragment : Fragment() {
                 Toast.makeText(requireContext(), "Failed to load ratings and reviews", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun updateVisibility() {
+        tvReviewStatus.visibility = View.VISIBLE
+        button14.visibility = View.GONE
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -26,6 +27,7 @@ class GenreChoosedActivity : AppCompatActivity() {
     private var isLoading = false
     private var isLastPage = false
     private lateinit var progressBar: View
+    private lateinit var title: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,9 +36,12 @@ class GenreChoosedActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         val backButton: ImageView = findViewById(R.id.imageView23)
         val cartButton: ImageView = findViewById(R.id.imageView24)
+        var title: TextView = findViewById(R.id.textView59)
+
 
         genre = intent.getStringExtra("GENRE")?.lowercase() ?: ""
 
+        title.text = genre.replaceFirstChar { it.uppercase() } + genre.drop(1).lowercase()
         recyclerView = findViewById(R.id.recyclerViewBooks)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 

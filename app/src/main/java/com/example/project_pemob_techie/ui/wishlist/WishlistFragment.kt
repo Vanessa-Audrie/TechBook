@@ -57,9 +57,13 @@ class WishlistFragment : Fragment(R.layout.fragment_wishlist) {
                         Log.e("WishlistFragment", "Invalid wishlist item data: $itemSnapshot")
                     }
                 }
+
                 if (wishlistItems.isEmpty()) {
-                    Toast.makeText(context, "Your wishlist is empty.", Toast.LENGTH_SHORT).show()
+                    binding.tvstatus.visibility = View.VISIBLE
+                } else {
+                    binding.tvstatus.visibility = View.GONE
                 }
+
                 Log.d("WishlistFragment", "Wishlist items: $wishlistItems")
                 setupRecyclerView(wishlistItems)
                 showLoading(false)
@@ -72,6 +76,7 @@ class WishlistFragment : Fragment(R.layout.fragment_wishlist) {
             }
         })
     }
+
 
 
     private fun removeItemFromWishlist(item: WishlistItem) {
