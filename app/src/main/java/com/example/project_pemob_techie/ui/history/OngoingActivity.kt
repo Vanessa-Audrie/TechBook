@@ -1,24 +1,16 @@
 package com.example.project_pemob_techie.ui.history
 
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.ActivityHistoryOngoingBinding
-import com.example.project_pemob_techie.databinding.ViewholderCheckoutConfirmationBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -113,7 +105,7 @@ class OngoingActivity : AppCompatActivity() {
                         if (task.isSuccessful) {
                             val idToken = task.result?.token
                             if (idToken != null) {
-//                                sendTokenToMake(idToken)
+                                sendTokenToMake(idToken)
                                 finish()
                             } else {
                                 Toast.makeText(this, "Failed to get ID token", Toast.LENGTH_SHORT).show()
@@ -207,81 +199,79 @@ class OngoingActivity : AppCompatActivity() {
         })
     }
 
-//
-//
-//    fun sendTokenToMake(idToken: String) {
-//        val transactionRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
-//            .getReference("6/transaction/$userId/$transactionId")
-//
-//        transactionRef.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val timestamp = snapshot.child("timestamp").getValue(Long::class.java) ?: System.currentTimeMillis()
-//                val totalPrice = itemQuantities.sumOf { it.price * it.quantity }
-//
-//                val userRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
-//                    .getReference("techbook_techie/user/$userId")
-//
-//                userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-//                    override fun onDataChange(userSnapshot: DataSnapshot) {
-//                        val email = userSnapshot.child("email").getValue(String::class.java)
-//
-//                        if (email != null) {
-//                            val url = URL("https://hook.us2.make.com/xyppeeiv1axnd6m7agifqojxh5pxwu36")
-//                            val connection = url.openConnection() as HttpURLConnection
-//                            connection.requestMethod = "POST"
-//                            connection.setRequestProperty("Content-Type", "application/json")
-//                            connection.doOutput = true
-//
-//                            val jsonInputString = """
-//                        {
-//                            "idToken": "$idToken",
-//                            "transactionId": "$transactionId",
-//                            "userId": "$userId",
-//                            "timestamp": "$timestamp",
-//                            "totalAmount": "${binding.tvTotalsValue.text}",
-//                            "shippingFee": "${binding.tvShippingFeeValue.text}",
-//                            "totalPrice": "$totalPrice",
-//                            "items": ${prepareItemsList()},
-//                            "email": "$email"
-//                        }
-//                        """
-//
-//                            OutputStreamWriter(connection.outputStream).apply {
-//                                write(jsonInputString)
-//                                flush()
-//                            }
-//
-//                            val responseCode = connection.responseCode
-//                            if (responseCode == HttpURLConnection.HTTP_OK) {
-//                                Log.d("HTTP Response", "Sent data successfully")
-//                            } else {
-//                                Log.e("HTTP Response", "Error sending data")
-//                            }
-//                        } else {
-//                            Toast.makeText(this@OngoingActivity, "Failed to fetch email", Toast.LENGTH_SHORT).show()
-//                        }
-//                    }
-//
-//                    override fun onCancelled(error: DatabaseError) {
-//                        Toast.makeText(this@OngoingActivity, "Failed to fetch user details", Toast.LENGTH_SHORT).show()
-//                    }
-//                })
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                Toast.makeText(this@OngoingActivity, "Failed to fetch transaction details", Toast.LENGTH_SHORT).show()
-//            }
-//        })
-//    }
-//
-//
-//    private fun prepareItemsList(): String {
-//        val itemsList = mutableListOf<String>()
-//        itemQuantities.forEach { item ->
-//            itemsList.add("{\"itemName\": \"${item.itemName}\", \"quantity\": ${item.quantity}, \"price\": ${item.price}}")
-//        }
-//        return itemsList.joinToString(",")
-//    }
+
+
+    fun sendTokenToMake(idToken: String) {
+        val transactionRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .getReference("6/transaction/$userId/$transactionId")
+
+        transactionRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val timestamp = snapshot.child("timestamp").getValue(Long::class.java) ?: System.currentTimeMillis()
+
+                val userRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                    .getReference("techbook_techie/user/$userId")
+
+                userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(userSnapshot: DataSnapshot) {
+                        val email = userSnapshot.child("email").getValue(String::class.java)
+
+                        if (email != null) {
+                            val url = URL("https://hook.us2.make.com/xyppeeiv1axnd6m7agifqojxh5pxwu36")
+                            val connection = url.openConnection() as HttpURLConnection
+                            connection.requestMethod = "POST"
+                            connection.setRequestProperty("Content-Type", "application/json")
+                            connection.doOutput = true
+
+                            val jsonInputString = """
+                        {
+                            "idToken": "$idToken",
+                            "transactionId": "$transactionId",
+                            "userId": "$userId",
+                            "timestamp": "$timestamp",
+                            "totalAmount": "${binding.tvTotalsValue.text}",
+                            "shippingFee": "${binding.tvShippingFeeValue.text}",
+                            "items": ${prepareItemsList()},
+                            "email": "$email"
+                        }
+                        """
+
+                            OutputStreamWriter(connection.outputStream).apply {
+                                write(jsonInputString)
+                                flush()
+                            }
+
+                            val responseCode = connection.responseCode
+                            if (responseCode == HttpURLConnection.HTTP_OK) {
+                                Log.d("HTTP Response", "Sent data successfully")
+                            } else {
+                                Log.e("HTTP Response", "Error sending data")
+                            }
+                        } else {
+                            Toast.makeText(this@OngoingActivity, "Failed to fetch email", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        Toast.makeText(this@OngoingActivity, "Failed to fetch user details", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@OngoingActivity, "Failed to fetch transaction details", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
+    private fun prepareItemsList(): String {
+        val itemsList = mutableListOf<String>()
+        itemQuantities.forEach { item ->
+            itemsList.add("{\"itemName\": \"${item.itemName}\", \"quantity\": ${item.quantity}, \"price\": ${item.price}}")
+        }
+        return itemsList.joinToString(",")
+    }
 }
 
 data class TransactionItem(

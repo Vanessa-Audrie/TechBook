@@ -32,6 +32,8 @@ import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
+import java.text.NumberFormat
+import java.util.Locale
 
 class BookDetails : AppCompatActivity() {
     private lateinit var viewModel: CartViewModel
@@ -48,17 +50,18 @@ class BookDetails : AppCompatActivity() {
         val bookImageView: ImageView = findViewById(R.id.bookImage)
         val cartIcon: ImageView = findViewById(R.id.imageView32)
         val addToCartButton: Button = findViewById(R.id.button10)
+        val purchaseCountTextView: TextView = findViewById(R.id.textView87)
 
         backButton.setOnClickListener {
             finish()
         }
+
         cartIcon.setOnClickListener {
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
         }
 
         val bookTitle = intent.getStringExtra("BOOK_TITLE")
-        val bookPrice = intent.getStringExtra("BOOK_PRICE")
         val bookImagePath = intent.getStringExtra("BOOK_IMG_PATH")
         val bookSynopsis = intent.getStringExtra("BOOK_SYNOPSIS")
         val bookISBN = intent.getStringExtra("BOOK_ISBN")
@@ -69,7 +72,9 @@ class BookDetails : AppCompatActivity() {
         val bookMass = intent.getStringExtra("BOOK_MASS")
         val bookPublisher = intent.getStringExtra("BOOK_PUBLISHER")
         bookTitleTextView.text = bookTitle ?: "No Title Available"
-        bookPriceTextView.text = "Rp $bookPrice"
+        val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
+        val bookPrice = intent.getStringExtra("BOOK_PRICE")?.toDoubleOrNull()
+        bookPriceTextView.text = "Rp ${formatter.format(bookPrice)}"
 
         if (!bookImagePath.isNullOrEmpty()) {
             val file = File(bookImagePath)
@@ -79,6 +84,10 @@ class BookDetails : AppCompatActivity() {
             } else {
                 bookImageView.setImageResource(R.drawable.error)
             }
+        }
+
+        if (!bookISBN.isNullOrEmpty()) {
+            fetchPurchaseCount(bookISBN, purchaseCountTextView)
         }
 
         val bookDetails = mapOf(
@@ -224,6 +233,34 @@ class BookDetails : AppCompatActivity() {
         }
 
     }
+
+    private fun fetchPurchaseCount(isbn: String, purchaseCountTextView: TextView) {
+        val database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .getReference("7/transaction_details")
+
+        var totalQuantity = 0
+
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (randomNode in snapshot.children) {
+                    for (subNode in randomNode.children) {
+                        val transactionIsbn = subNode.child("isbn").getValue(String::class.java)
+                        if (transactionIsbn == isbn) {
+                            val quantity = subNode.child("quantity").getValue(Int::class.java) ?: 0
+                            totalQuantity += quantity
+                        }
+                    }
+                }
+                purchaseCountTextView.text = "($totalQuantity has been bought)"
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@BookDetails, "Failed to load purchase count", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
 
     private fun getHexStringFromImagePath(imagePath: String?): String {
         if (imagePath.isNullOrEmpty()) return ""
