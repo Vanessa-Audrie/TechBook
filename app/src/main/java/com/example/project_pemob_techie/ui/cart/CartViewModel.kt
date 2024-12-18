@@ -31,9 +31,16 @@ class CartViewModel : ViewModel() {
                         is Int -> quantityRaw
                         else -> 0
                     }
+                    val massRaw = itemSnapshot.child("mass").value
+                    val mass = when (massRaw) {
+                        is Long -> massRaw.toDouble()
+                        is Double -> massRaw
+                        is String -> massRaw.toDoubleOrNull() ?: 0.0
+                        else -> 0.0
+                    }
 
-                    if (bookTitle != null && price != null && image != null && quantity > 0) {
-                        cartItems.add(CartItem(itemSnapshot.key ?: "", bookTitle, price, quantity, image))
+                    if (bookTitle != null && price != null && image != null && quantity > 0 && mass != null) {
+                        cartItems.add(CartItem(itemSnapshot.key ?: "", bookTitle, price, quantity, image, mass))
                     }
                 }
                 _cartItems.postValue(cartItems)

@@ -88,6 +88,9 @@ class ConfirmationActivity : AppCompatActivity() {
             intent.putExtra("totalPrice", totalPrice)
             intent.putExtra("shippingFee", shippingFee)
             startActivity(intent)
+
+
+
         }
 
     }
@@ -96,7 +99,10 @@ class ConfirmationActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val selectedItems = dbHelper.getAllSelectedItems()
-                loadItemDetailsFromFirebase(selectedItems)
+                loadItemDetailsFromFirebase(selectedItems) { totalMass ->
+                    this@ConfirmationActivity.totalMass = totalMass
+                    checkAndLoadShippingFee()
+                }
             } catch (e: Exception) {
                 runOnUiThread {
                     Toast.makeText(this@ConfirmationActivity, "Error loading selected items: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -105,7 +111,14 @@ class ConfirmationActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadItemDetailsFromFirebase(selectedItems: List<String>) {
+
+    private var totalMass = 0.0
+    private var city: String? = null
+    private var isCityLoaded = false
+    private var isMassLoaded = false
+
+
+    private fun loadItemDetailsFromFirebase(selectedItems: List<String>, callback: (Double) -> Unit) {
         val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("3/cart/userId/$userId")
 
@@ -113,6 +126,7 @@ class ConfirmationActivity : AppCompatActivity() {
         val totalItems = selectedItems.size
         var itemsLoaded = 0
         var totalPrice = 0.0
+        var totalMass = 0.0
 
         selectedItems.forEach { isbn ->
             databaseRef.child(isbn).addListenerForSingleValueEvent(object : ValueEventListener {
@@ -123,12 +137,22 @@ class ConfirmationActivity : AppCompatActivity() {
                         val price = priceString.toDoubleOrNull() ?: 0.0
                         val quantity = snapshot.child("quantity").getValue(Int::class.java) ?: 0
                         val image = snapshot.child("image").getValue(String::class.java).orEmpty()
+                        val massRaw = snapshot.child("mass").value
+                        val mass = when (massRaw) {
+                            is Long -> massRaw.toDouble()
+                            is Double -> massRaw
+                            is String -> massRaw.toDoubleOrNull() ?: 0.0
+                            else -> 0.0
+                        }
+
+                        totalMass += mass * quantity
 
                         val cartItem = CartItem(
                             isbn = isbn,
                             title = title,
                             price = priceString,
                             quantity = quantity,
+                            mass = mass,
                             image = image
                         )
                         updatedItems.add(cartItem)
@@ -138,9 +162,11 @@ class ConfirmationActivity : AppCompatActivity() {
                         totalPrice += price * quantity
 
                         if (itemsLoaded == totalItems) {
-
                             updateRecyclerView(updatedItems)
                             updateTotals(totalQuantity, totalPrice, 0.0)
+
+                            isMassLoaded = true
+                            callback(totalMass)
                         }
                     } catch (e: Exception) {
                         Log.e("ConfirmationActivity", "Error loading item data: ${e.message}", e)
@@ -156,6 +182,19 @@ class ConfirmationActivity : AppCompatActivity() {
         }
     }
 
+
+
+    private fun onTotalMassCalculated(totalMass: Double) {
+        this.totalMass = totalMass
+        checkAndLoadShippingFee()
+    }
+
+    private fun checkAndLoadShippingFee() {
+        if (isCityLoaded && isMassLoaded && totalMass > 0) {
+            val city = this.city ?: return
+            loadShippingFee(city, totalMass)
+        }
+    }
 
     private fun loadShippingDetails() {
         val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
@@ -173,8 +212,10 @@ class ConfirmationActivity : AppCompatActivity() {
                 textViewPhoneNumber.text = phoneNumber
                 textViewAddress.text = "$streetAddress, $city, $postalCode"
 
-                loadShippingFee(city)
+                this@ConfirmationActivity.city = city
+                isCityLoaded = true
 
+                checkAndLoadShippingFee()
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -183,7 +224,7 @@ class ConfirmationActivity : AppCompatActivity() {
         })
     }
 
-    private fun loadShippingFee(city: String) {
+    private fun loadShippingFee(city: String, totalMass: Double) {
         val shippingFeeRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("11/shipping_fee/$city")
 
@@ -200,8 +241,9 @@ class ConfirmationActivity : AppCompatActivity() {
                 } else {
                     0.0
                 }
-
-                updateTotals(totalQuantity, totalPrice, shippingFee)
+                val roundedMass = kotlin.math.ceil(totalMass)
+                val shippingFee2 = roundedMass * shippingFee
+                updateTotals(totalQuantity, totalPrice, shippingFee2)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -209,6 +251,7 @@ class ConfirmationActivity : AppCompatActivity() {
             }
         })
     }
+
 
 
     private fun updateRecyclerView(updatedItems: List<CartItem>) {
@@ -221,11 +264,11 @@ class ConfirmationActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateTotals(totalQuantity: Int, totalPrice: Double, shippingFee: Double) {
+    private fun updateTotals(totalQuantity: Int, totalPrice: Double, shippingFee2: Double) {
         val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
         textViewTotalQuantity.text = "$totalQuantity"
         textViewTotalPrice.text = "Rp ${formatter.format(totalPrice)}"
-        val totalAmount = totalPrice + shippingFee
+        val totalAmount = totalPrice + shippingFee2
         TotalamountTextview.text = "Rp ${formatter.format(totalAmount)}"
     }
 

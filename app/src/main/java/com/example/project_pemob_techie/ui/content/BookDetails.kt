@@ -3,19 +3,15 @@ package com.example.project_pemob_techie.ui.content
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
-import coil.load
 import com.example.project_pemob_techie.R
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.CoroutineStart
 import java.io.File
-import android.util.Base64
 import android.widget.Toast
 import com.example.project_pemob_techie.ui.account.SessionManager
 import com.google.firebase.database.DataSnapshot
@@ -24,16 +20,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import android.graphics.Bitmap
 import android.widget.Button
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.project_pemob_techie.ui.cart.CartActivity
-import com.example.project_pemob_techie.ui.cart.CartItem
 import com.example.project_pemob_techie.ui.cart.CartViewModel
-import com.google.firebase.database.DatabaseReference
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
-import java.text.NumberFormat
-import java.util.Locale
 
 class BookDetails : AppCompatActivity() {
     private lateinit var viewModel: CartViewModel
@@ -72,7 +61,6 @@ class BookDetails : AppCompatActivity() {
         val bookMass = intent.getStringExtra("BOOK_MASS")
         val bookPublisher = intent.getStringExtra("BOOK_PUBLISHER")
         bookTitleTextView.text = bookTitle ?: "No Title Available"
-        val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
         val bookPrice = intent.getStringExtra("BOOK_PRICE")
         bookPriceTextView.text = "Rp $bookPrice"
 
@@ -211,27 +199,38 @@ class BookDetails : AppCompatActivity() {
                 Toast.makeText(this, "Invalid book ID", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             val userId = SessionManager.getUserId(this)
             if (userId.isNullOrEmpty()) {
                 Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             val hexString = getHexStringFromImagePath(bookImagePath)
-            val cartItem = mapOf(
-                "isbn" to itemId,
-                "title" to bookTitle,
-                "price" to bookPrice,
-                "image" to hexString,
-                "quantity" to 1
-            )
 
-            userCartRef.setValue(cartItem).addOnSuccessListener {
-                Toast.makeText(this@BookDetails, "Added to cart", Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener {
-                Toast.makeText(this@BookDetails, "Failed to update cart", Toast.LENGTH_SHORT).show()
-            }
+            userCartRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var existingQuantity = 0
+                    if (snapshot.exists()) {
+                        existingQuantity = snapshot.child("quantity").getValue(Int::class.java) ?: 0
+                    }
+                    val updatedQuantity = existingQuantity + 1
+                    val cartItem = mapOf(
+                        "isbn" to itemId,
+                        "title" to bookTitle,
+                        "price" to bookPrice,
+                        "image" to hexString,
+                        "mass" to bookMass,
+                        "quantity" to updatedQuantity
+                    )
+                    userCartRef.setValue(cartItem).addOnSuccessListener {
+                        Toast.makeText(this@BookDetails, "Added to cart", Toast.LENGTH_SHORT).show()
+                    }.addOnFailureListener {
+                        Toast.makeText(this@BookDetails, "Failed to update cart", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(this@BookDetails, "Failed to check cart", Toast.LENGTH_SHORT).show()
+                }
+            })
         }
 
     }

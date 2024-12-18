@@ -6,5 +6,6 @@ data class CartItem(
     val price: String? = null,
     var quantity: Int,
     var image: String? = null,
+    val mass: Double? = null,
     var selected: Boolean = false
 )
