@@ -1,6 +1,7 @@
 package com.example.project_pemob_techie.ui.history
 
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -196,9 +197,19 @@ class OngoingActivity : AppCompatActivity() {
                 binding.tvOrderStatus.text = "Package is on the way!"
                 if (paymentStatus) {
                     binding.btnReceived.isEnabled = true
+                    val yellowDrawable = GradientDrawable()
+                    yellowDrawable.shape = GradientDrawable.RECTANGLE
+                    yellowDrawable.cornerRadius = 16f
+                    yellowDrawable.setColor(ContextCompat.getColor(this@OngoingActivity, R.color.yellow))
+                    binding.btnReceived.background = yellowDrawable
                 } else {
                     binding.btnReceived.isEnabled = false
-                    binding.btnReceived.setBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.gray))
+                    val grayDrawable = GradientDrawable()
+                    grayDrawable.shape = GradientDrawable.RECTANGLE
+                    grayDrawable.cornerRadius = 16f
+                    grayDrawable.setColor(ContextCompat.getColor(this@OngoingActivity, R.color.gray))
+
+                    binding.btnReceived.background = grayDrawable
 
                 }
 

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -53,6 +54,8 @@ class HomeFragment : Fragment() {
         val mysteryButton: ImageView = root.findViewById(R.id.imageMystery)
         val romanceButton: ImageView = root.findViewById(R.id.imageRomance)
         val horrorButton: ImageView = root.findViewById(R.id.imageHorror)
+        val shippingDrop : ImageView = root.findViewById(R.id.dropDelivery)
+        val shippingButton: TextView = root.findViewById(R.id.textView2)
 
         viewPager = binding.viewpagerSlider
         setupImageCarousel()
@@ -81,6 +84,17 @@ class HomeFragment : Fragment() {
                 error.toException().printStackTrace()
             }
         })
+
+
+        shippingDrop.setOnClickListener{
+            val intent = Intent(requireContext(), Shipping::class.java)
+            startActivity(intent)
+        }
+
+        shippingButton.setOnClickListener{
+            val intent = Intent(requireContext(), Shipping::class.java)
+            startActivity(intent)
+        }
 
         imageAll.setOnClickListener{
             val intent = Intent(requireContext(), GenreActivity::class.java)

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -33,6 +34,12 @@ class SearchResultActivity : AppCompatActivity() {
     private lateinit var progressBar: View
     var lastVisibleKey: String? = null
     private val searchCache = mutableMapOf<String, List<BookResponse>>()
+
+    private val genres = listOf(
+        "Fantasy", "Action", "Comic", "Self-improvement", "Mystery", "History",
+        "Philosophy", "Biography", "Business",  "Comedy", "Fiction", "Romance",
+        "Music", "Children", "Psychology", "Horror", "Spirituality", "Art"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -173,6 +180,9 @@ class SearchResultActivity : AppCompatActivity() {
         )
 
         val genreDropdown = popupView.findViewById<MaterialAutoCompleteTextView>(R.id.materialAutoCompleteTextView)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, genres)
+        genreDropdown.setAdapter(adapter)
+
         val applyButton = popupView.findViewById<Button>(R.id.button8)
         val priceRadioGroup = popupView.findViewById<RadioGroup>(R.id.priceRadioGroup)
 

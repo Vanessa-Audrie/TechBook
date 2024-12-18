@@ -1,4 +1,4 @@
-package com.example.project_pemob_techie.ui.content
+package com.example.project_pemob_techie.ui.home
 
 import android.os.Bundle
 import android.widget.ArrayAdapter

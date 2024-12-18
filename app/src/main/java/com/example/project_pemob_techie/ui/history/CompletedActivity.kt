@@ -1,6 +1,7 @@
 package com.example.project_pemob_techie.ui.history
 
 import android.content.Intent
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -154,9 +155,24 @@ class CompletedActivity : AppCompatActivity() {
                 }
                 if (hasReviewed) {
                     binding.btnReview.isEnabled = false
-                    binding.btnReview.setBackgroundColor(ContextCompat.getColor(this@CompletedActivity, R.color.gray))
                     binding.tvReviewStatus.visibility = android.view.View.VISIBLE
+                    val grayDrawable = GradientDrawable()
+                    grayDrawable.shape = GradientDrawable.RECTANGLE
+                    grayDrawable.cornerRadius = 16f
+                    grayDrawable.setColor(ContextCompat.getColor(this@CompletedActivity, R.color.gray))
+
+                    binding.btnReview.background = grayDrawable
+
+                } else {
+                    binding.btnReview.isEnabled = true
+
+                    val yellowDrawable = GradientDrawable()
+                    yellowDrawable.shape = GradientDrawable.RECTANGLE
+                    yellowDrawable.cornerRadius = 16f
+                    yellowDrawable.setColor(ContextCompat.getColor(this@CompletedActivity, R.color.yellow))
+                    binding.btnReview.background = yellowDrawable
                 }
+
             }
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(this@CompletedActivity, "Failed to check review status", Toast.LENGTH_SHORT).show()

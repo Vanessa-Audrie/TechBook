@@ -213,7 +213,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Order Received"
-        android:backgroundTint="@color/yellow"
+        android:backgroundTintMode="src_atop"
         android:textColor="@color/white"
         android:fontFamily="@font/montserrat_medium"
         android:layout_marginTop="15dp"
