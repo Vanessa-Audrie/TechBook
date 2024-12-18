@@ -1,16 +1,19 @@
 package com.example.project_pemob_techie.ui.wishlist
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.FragmentWishlistBinding
 import com.example.project_pemob_techie.ui.account.SessionManager
+import com.example.project_pemob_techie.ui.cart.CartActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -31,9 +34,17 @@ class WishlistFragment : Fragment(R.layout.fragment_wishlist) {
             Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show()
             return binding.root
         }
+        val root: View = binding.root
+        val cartIcon: ImageView = root.findViewById(R.id.cartWishlist)
+
         userId = SessionManager.getUserId(requireContext()) ?: return binding.root
         showLoading(true)
         loadWishlist()
+        cartIcon.setOnClickListener {
+            val intent = Intent(requireContext(), CartActivity::class.java)
+            startActivity(intent)
+        }
+
         return binding.root
     }
 

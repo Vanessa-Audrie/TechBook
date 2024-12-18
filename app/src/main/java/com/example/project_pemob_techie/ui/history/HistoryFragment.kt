@@ -1,13 +1,17 @@
 package com.example.project_pemob_techie.ui.history
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.FragmentHistoryBinding
 import com.example.project_pemob_techie.ui.account.SessionManager
+import com.example.project_pemob_techie.ui.cart.CartActivity
 import com.google.android.material.tabs.TabLayoutMediator
 
 class HistoryFragment : Fragment() {
@@ -22,11 +26,17 @@ class HistoryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
+        val root: View = binding.root
 
         userId = SessionManager.getUserId(requireContext()) ?: run {
             throw IllegalStateException("User not logged in")
+        }
+        val cartIcon: ImageView = root.findViewById(R.id.cartHistory)
+
+        cartIcon.setOnClickListener {
+            val intent = Intent(requireContext(), CartActivity::class.java)
+            startActivity(intent)
         }
 
         val adapter = HistoryPagerAdapter(this, userId)
@@ -38,6 +48,7 @@ class HistoryFragment : Fragment() {
                 1 -> tab.text = "Completed"
             }
         }.attach()
+
 
         return binding.root
     }
