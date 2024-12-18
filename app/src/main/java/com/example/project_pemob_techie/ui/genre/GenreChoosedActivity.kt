@@ -29,18 +29,16 @@ class GenreChoosedActivity : AppCompatActivity() {
     private lateinit var progressBar: View
     private lateinit var title: TextView
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_genre_choosed)
+
         progressBar = findViewById(R.id.progressBar)
         val backButton: ImageView = findViewById(R.id.imageView23)
         val cartButton: ImageView = findViewById(R.id.imageView24)
-        var title: TextView = findViewById(R.id.textView59)
-
+        title = findViewById(R.id.textView59)
 
         genre = intent.getStringExtra("GENRE")?.lowercase() ?: ""
-
         title.text = genre.replaceFirstChar { it.uppercase() }
 
         recyclerView = findViewById(R.id.recyclerViewBooks)
@@ -53,12 +51,13 @@ class GenreChoosedActivity : AppCompatActivity() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val layoutManager = recyclerView.layoutManager as GridLayoutManager
-                val totalItemCount = layoutManager.itemCount
-                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                if (!isLoading && !isLastPage) {
+                    val layoutManager = recyclerView.layoutManager as GridLayoutManager
+                    val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
 
-                if (!isLoading && !isLastPage && totalItemCount <= (lastVisibleItem + 5)) {
-                    loadBooksByGenre()
+                    if (lastVisibleItemPosition >= layoutManager.itemCount - 9) {
+                        loadBooksByGenre()
+                    }
                 }
             }
         })
@@ -67,47 +66,34 @@ class GenreChoosedActivity : AppCompatActivity() {
 
         Log.d("Selected", "Genre: $genre")
 
-        backButton.setOnClickListener {
-            finish()
-        }
-
+        backButton.setOnClickListener { finish() }
         cartButton.setOnClickListener {
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
-
         }
     }
 
     private fun loadBooksByGenre() {
-        showLoading(true)
-        
+        if (isLoading || isLastPage) return
+        if (genreResults.isEmpty()) {
+            showLoading(true)
+        }
+        isLoading = true
         booksRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("2/data/")
-
-        var query: Query = booksRef.orderByKey().limitToFirst(70)
-
-
-        if (!lastVisibleBookKey.isNullOrEmpty()) {
-            query = booksRef.orderByKey().startAfter(lastVisibleBookKey).limitToFirst(70)
+        val query: Query = if (lastVisibleBookKey.isNullOrEmpty()) {
+            booksRef.orderByKey().limitToFirst(50)
+        } else {
+            booksRef.orderByKey().startAfter(lastVisibleBookKey).limitToFirst(50)
         }
-
-        isLoading = true
-
         query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                showLoading(false)
-                if (snapshot.exists() && snapshot.children.count() > 0) {
-                    val booksToAdd = mutableListOf<BookResponse>()
-
-                    for (dataSnapshot in snapshot.children) {
-                        val book = dataSnapshot.getValue(BookResponse::class.java)
-                        if (book != null) {
-                            val bookGenre = book.genre?.lowercase()
-                            if (bookGenre != null && bookGenre.contains(genre)) {
-                                booksToAdd.add(book)
-                            }
-                        }
-                    }
+                if (genreResults.isEmpty()) {
+                    showLoading(false)
+                }
+                if (snapshot.exists()) {
+                    val booksToAdd = snapshot.children.mapNotNull { it.getValue(BookResponse::class.java) }
+                        .filter { it.genre?.lowercase()?.contains(genre) == true }
 
                     if (booksToAdd.isNotEmpty()) {
                         genreResults.addAll(booksToAdd)
@@ -115,29 +101,28 @@ class GenreChoosedActivity : AppCompatActivity() {
 
                         lastVisibleBookKey = snapshot.children.lastOrNull()?.key
                     } else {
-                        Toast.makeText(this@GenreChoosedActivity, "No more books available", Toast.LENGTH_SHORT).show()
                         isLastPage = true
+                        Toast.makeText(this@GenreChoosedActivity, "No more books available", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this@GenreChoosedActivity, "No more books available", Toast.LENGTH_SHORT).show()
                     isLastPage = true
+                    Toast.makeText(this@GenreChoosedActivity, "No more books available", Toast.LENGTH_SHORT).show()
                 }
 
                 isLoading = false
             }
 
             override fun onCancelled(error: DatabaseError) {
-                showLoading(false)
-                Toast.makeText(this@GenreChoosedActivity, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                if (genreResults.isEmpty()) {
+                    showLoading(false)
+                }
                 isLoading = false
+                Toast.makeText(this@GenreChoosedActivity, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     private fun showLoading(isLoading: Boolean) {
         progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        recyclerView.visibility = if (isLoading) View.GONE else View.VISIBLE
     }
-
-
 }

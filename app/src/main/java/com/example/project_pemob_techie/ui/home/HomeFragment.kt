@@ -71,7 +71,7 @@ class HomeFragment : Fragment() {
         database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("2/data/")
 
-        database.limitToFirst(2).addValueEventListener(object : ValueEventListener {
+        database.limitToFirst(6).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 recommendations.clear()
                 for (dataSnapshot in snapshot.children) {

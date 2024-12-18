@@ -67,9 +67,13 @@ class CartActivity : AppCompatActivity() {
         }
 
         cartViewModel.cartItems.observe(this, { items ->
+            dbHelper.clearAllSelectedItems()
+            cartAdapter.resetSelectedItems()
             cartAdapter.updateCart(items)
             updateTvStatusVisibility(items.isEmpty())
         })
+
+
 
         cartViewModel.loadCartItems(userId)
 

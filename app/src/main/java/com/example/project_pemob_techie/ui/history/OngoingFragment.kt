@@ -68,25 +68,32 @@ class OngoingFragment : Fragment() {
 
 
     private fun fetchTransactionIds(databaseRef: DatabaseReference) {
+        showLoading(true)
         databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 ongoingTransactions.clear()
                 for (transaction in snapshot.children) {
                     val transactionId = transaction.key
                     val shippingStatus = transaction.child("shipping_status").getValue(Boolean::class.java) ?: true
-
                     if (!shippingStatus) {
                         transactionId?.let { ongoingTransactions.add(it) }
                     }
                 }
-
-                updateUI()
+                showLoading(false)
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context, "Failed to fetch data", Toast.LENGTH_SHORT).show()
+                showLoading(false)
+                Toast.makeText(context, "Failed to fetch data: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        if (!isLoading) {
+            updateUI()
+        }
     }
 
     private fun updateUI() {
@@ -99,6 +106,7 @@ class OngoingFragment : Fragment() {
             adapter.notifyDataSetChanged()
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

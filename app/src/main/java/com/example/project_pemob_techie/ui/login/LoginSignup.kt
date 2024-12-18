@@ -5,15 +5,19 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.project_pemob_techie.MainActivity
 import com.example.project_pemob_techie.databinding.ActivityLoginSignupBinding
+import com.example.project_pemob_techie.ui.account.SessionManager
 
 class LoginSignup : AppCompatActivity() {
-
     private lateinit var binding: ActivityLoginSignupBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        if (SessionManager.isLoggedIn(this)) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
+        }
         binding = ActivityLoginSignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

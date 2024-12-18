@@ -112,59 +112,33 @@ class CartAdapter(
 
         holder.checkbox.setOnCheckedChangeListener(null)
         holder.checkbox.isChecked = selectedItems.contains(cartItem.isbn)
-
         holder.checkbox.setOnCheckedChangeListener { _, isChecked ->
             val price = cartItem.price?.toDoubleOrNull() ?: 0.0
+
             if (isChecked) {
                 dbHelper.addSelectedItem(cartItem.isbn)
                 selectedItems.add(cartItem.isbn)
-
                 totalQuantity += cartItem.quantity
                 totalPrice += price * cartItem.quantity
             } else {
                 dbHelper.removeSelectedItem(cartItem.isbn)
                 selectedItems.remove(cartItem.isbn)
-
                 totalQuantity -= cartItem.quantity
                 totalPrice -= price * cartItem.quantity
             }
 
-            updateSelectAllCheckboxState()
-
             textView12.text = "$totalQuantity"
             val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
             textView13.text = "Rp ${formatter.format(totalPrice)}"
+
+            updateSelectAllCheckboxState()
         }
 
-        holder.btnIncrease.setOnClickListener {
-            cartItem.quantity += 1
-            holder.quantity.text = cartItem.quantity.toString()
+    }
 
-            if (selectedItems.contains(cartItem.isbn)) {
-                updateTotal(cartItem, true)
-            }
-
-            updateCartInDatabase(cartItem)
-            notifyItemChangedSafely(position)
-        }
-
-        holder.btnDecrease.setOnClickListener {
-            if (cartItem.quantity > 1) {
-                cartItem.quantity -= 1
-                holder.quantity.text = cartItem.quantity.toString()
-
-                if (selectedItems.contains(cartItem.isbn)) {
-                    updateTotal(cartItem, false)
-                }
-
-                updateCartInDatabase(cartItem)
-                notifyItemChangedSafely(position)
-            } else {
-                Toast.makeText(context, "Quantity cannot be less than 1", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
+    fun resetSelectedItems() {
+        selectedItems.clear()
+        notifyDataSetChanged()
     }
 
     private fun updateTotal(cartItem: CartItem, isIncrease: Boolean) {
@@ -183,23 +157,24 @@ class CartAdapter(
     }
 
     private fun updateSelectAllCheckboxState() {
-        val selectAllChecked = selectedItems.size == cartItems.size
-        if (checkbox2.isChecked != selectAllChecked) {
-            checkbox2.isChecked = selectAllChecked
-        }
+        checkbox2.isChecked = selectedItems.size == cartItems.size
     }
 
     private fun removeItemFromCart(cartItem: CartItem, position: Int) {
-        if (cartItems.isNotEmpty() && position in 0 until cartItems.size) {
+        if (cartItems.isNotEmpty() && position in cartItems.indices) {
             val cartRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("3/cart/userId/$userId/${cartItem.isbn}")
-
+            val tempPosition = position
             cartRef.removeValue()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        cartItems.removeAt(position)
-                        notifyItemRemoved(position)
-                        Toast.makeText(context, "${cartItem.title} removed from cart", Toast.LENGTH_SHORT).show()
+                        if (cartItems.size > tempPosition) {
+                            cartItems.removeAt(tempPosition)
+                            notifyItemRemoved(tempPosition)
+                            Toast.makeText(context, "${cartItem.title} removed from cart", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Log.e("CartAdapter", "Position out of bounds after Firebase update")
+                        }
                     } else {
                         Toast.makeText(context, "Failed to remove item: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
@@ -208,7 +183,6 @@ class CartAdapter(
             Log.e("CartAdapter", "Invalid position or empty cartItems list: position = $position, cartItems.size = ${cartItems.size}")
         }
     }
-
 
 
     private fun updateCartInDatabase(cartItem: CartItem) {
@@ -254,23 +228,18 @@ class CartAdapter(
     fun selectAllItems(selectAll: Boolean) {
         totalQuantity = 0
         totalPrice = 0.0
-
-        for (cartItem in cartItems) {
-            val price = cartItem.price?.toDoubleOrNull() ?: 0.0
-
-            if (selectAll) {
-                if (!selectedItems.contains(cartItem.isbn)) {
-                    selectedItems.add(cartItem.isbn)
-                    dbHelper.addSelectedItem(cartItem.isbn)
-                }
+        if (selectAll) {
+            // Select all items
+            selectedItems.clear()  // Ensure it's cleared before adding all items
+            for (cartItem in cartItems) {
+                selectedItems.add(cartItem.isbn)
+                dbHelper.addSelectedItem(cartItem.isbn)
                 totalQuantity += cartItem.quantity
-                totalPrice += price * cartItem.quantity
-            } else {
-                if (selectedItems.contains(cartItem.isbn)) {
-                    selectedItems.remove(cartItem.isbn)
-                    dbHelper.removeSelectedItem(cartItem.isbn)
-                }
+                totalPrice += (cartItem.price?.toDoubleOrNull() ?: 0.0) * cartItem.quantity
             }
+        } else {
+            dbHelper.clearAllSelectedItems()
+            selectedItems.clear()
         }
 
         textView12.text = "$totalQuantity"
@@ -278,6 +247,9 @@ class CartAdapter(
         textView13.text = "Rp ${formatter.format(totalPrice)}"
 
         notifyDataSetChangedSafely()
+        updateSelectAllCheckboxState() // Update the "select all" checkbox state.
     }
+
+
 }
 

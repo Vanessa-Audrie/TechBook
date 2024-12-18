@@ -67,5 +67,12 @@ class SQLiteHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
         return selectedItems
     }
 
+    fun clearAllSelectedItems() {
+        val db = writableDatabase
+        db.execSQL("DELETE FROM $TABLE_NAME")
+        db.close()
+    }
+
+
 
 }

@@ -57,6 +57,8 @@ class CompletedFragment : Fragment() {
     }
 
     private fun fetchCompletedTransactions(databaseRef: DatabaseReference) {
+        showLoading(true)
+
         databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 completedTransactions.clear()
@@ -69,15 +71,22 @@ class CompletedFragment : Fragment() {
                     }
                 }
 
-                updateUI()
+                showLoading(false)
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context, "Failed to fetch data", Toast.LENGTH_SHORT).show()
+                showLoading(false)
+                Toast.makeText(context, "Failed to fetch data: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        if (!isLoading) {
+            updateUI()
+        }
+    }
 
     private fun updateUI() {
         if (completedTransactions.isEmpty()) {
