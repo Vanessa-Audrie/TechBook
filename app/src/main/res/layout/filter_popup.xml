@@ -174,17 +174,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            app:layout_constraintVertical_weight="0.2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-            <RadioButton
-                android:id="@+id/checkBox12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                app:layout_constraintRight_toLeftOf="@id/ratingBar5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/checkBox11" />
+        <RadioButton
+            android:id="@+id/checkBox12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_constraintRight_toLeftOf="@id/ratingBar5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/checkBox11" />
 
             <RadioButton
                 android:id="@+id/checkBox11"
@@ -287,6 +289,9 @@
         android:layout_marginTop="16dp"
         android:text="Filter"
         android:textAllCaps="false"
+        style="@style/RoundedButton"
+        android:textSize="15sp"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout16" />
@@ -298,6 +303,9 @@
                 android:layout_marginTop="16dp"
                 android:text="Reset Filter"
                 android:textAllCaps="false"
+                style="@style/RoundedButton"
+                android:textSize="15sp"
+                android:textColor="@android:color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button8" />

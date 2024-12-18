@@ -62,7 +62,8 @@
         <activity
             android:name=".ui.content.SearchResultActivity"
             android:exported="true"
-            android:theme="@style/Theme.Project_Pemob_Techie.FullScreen" />
+            android:theme="@style/Theme.Project_Pemob_Techie.FullScreen"
+            android:windowSoftInputMode="adjustPan"/>
 
         <activity android:name=".ui.account.EditProfileActivity"
             android:exported="true"
