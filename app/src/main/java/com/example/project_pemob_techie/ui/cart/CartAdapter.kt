@@ -85,6 +85,9 @@ class CartAdapter(
         holder.btnIncrease.setOnClickListener {
             cartItem.quantity += 1
             holder.quantity.text = cartItem.quantity.toString()
+
+            updateTotal(cartItem, true)
+
             updateCartInDatabase(cartItem)
             notifyItemChangedSafely(position)
         }
@@ -93,6 +96,9 @@ class CartAdapter(
             if (cartItem.quantity > 1) {
                 cartItem.quantity -= 1
                 holder.quantity.text = cartItem.quantity.toString()
+
+                updateTotal(cartItem, false)
+
                 updateCartInDatabase(cartItem)
                 notifyItemChangedSafely(position)
             } else {
@@ -129,13 +135,113 @@ class CartAdapter(
             val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
             textView13.text = "Rp ${formatter.format(totalPrice)}"
         }
+
+        holder.btnIncrease.setOnClickListener {
+            cartItem.quantity += 1
+            holder.quantity.text = cartItem.quantity.toString()
+
+            if (selectedItems.contains(cartItem.isbn)) {
+                updateTotal(cartItem, true)
+            }
+
+            updateCartInDatabase(cartItem)
+            notifyItemChangedSafely(position)
+        }
+
+        holder.btnDecrease.setOnClickListener {
+            if (cartItem.quantity > 1) {
+                cartItem.quantity -= 1
+                holder.quantity.text = cartItem.quantity.toString()
+
+                if (selectedItems.contains(cartItem.isbn)) {
+                    updateTotal(cartItem, false)
+                }
+
+                updateCartInDatabase(cartItem)
+                notifyItemChangedSafely(position)
+            } else {
+                Toast.makeText(context, "Quantity cannot be less than 1", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
     }
 
-    fun updateSelectAllCheckboxState() {
+    private fun updateTotal(cartItem: CartItem, isIncrease: Boolean) {
+        val price = cartItem.price?.toDoubleOrNull() ?: 0.0
+        if (isIncrease) {
+            totalQuantity += 1
+            totalPrice += price
+        } else {
+            totalQuantity -= 1
+            totalPrice -= price
+        }
+
+        textView12.text = "$totalQuantity"
+        val formatter = NumberFormat.getNumberInstance(Locale("id", "ID"))
+        textView13.text = "Rp ${formatter.format(totalPrice)}"
+    }
+
+    private fun updateSelectAllCheckboxState() {
         val selectAllChecked = selectedItems.size == cartItems.size
         if (checkbox2.isChecked != selectAllChecked) {
             checkbox2.isChecked = selectAllChecked
         }
+    }
+
+    private fun removeItemFromCart(cartItem: CartItem, position: Int) {
+        if (cartItems.isNotEmpty() && position in 0 until cartItems.size) {
+            val cartRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference("3/cart/userId/$userId/${cartItem.isbn}")
+
+            cartRef.removeValue()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        cartItems.removeAt(position)
+                        notifyItemRemoved(position)
+                        Toast.makeText(context, "${cartItem.title} removed from cart", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Failed to remove item: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        } else {
+            Log.e("CartAdapter", "Invalid position or empty cartItems list: position = $position, cartItems.size = ${cartItems.size}")
+        }
+    }
+
+
+
+    private fun updateCartInDatabase(cartItem: CartItem) {
+        val cartRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            .getReference("3/cart/userId/$userId/${cartItem.isbn}")
+
+        cartRef.setValue(cartItem)
+            .addOnSuccessListener {
+                Log.d("CartAdapter", "CartItem updated successfully in Firebase")
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Failed to update quantity: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun notifyDataSetChangedSafely() {
+        CoroutineScope(Dispatchers.Main).launch {
+            notifyDataSetChanged()
+        }
+    }
+
+    private fun notifyItemChangedSafely(position: Int) {
+        CoroutineScope(Dispatchers.Main).launch {
+            notifyItemChanged(position)
+        }
+    }
+
+    private fun hexStringToByteArray(hex: String): ByteArray {
+        val result = ByteArray(hex.length / 2)
+        for (i in hex.indices step 2) {
+            result[i / 2] = hex.substring(i, i + 2).toInt(16).toByte()
+        }
+        return result
     }
 
     override fun getItemCount(): Int = cartItems.size
@@ -173,54 +279,5 @@ class CartAdapter(
 
         notifyDataSetChangedSafely()
     }
-
-    private fun removeItemFromCart(cartItem: CartItem, position: Int) {
-        if (position in cartItems.indices) {
-            val cartRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                .getReference("3/cart/userId/$userId/${cartItem.isbn}")
-
-            cartRef.removeValue()
-                .addOnSuccessListener {
-                    cartItems.removeAt(position)
-                    notifyItemRemoved(position)
-                    Toast.makeText(context, "${cartItem.title} removed from cart", Toast.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener {
-                    Toast.makeText(context, "Failed to remove item: ${it.message}", Toast.LENGTH_SHORT).show()
-                }
-        }
-    }
-
-    private fun updateCartInDatabase(cartItem: CartItem) {
-        val cartRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .getReference("3/cart/userId/$userId/${cartItem.isbn}")
-
-        cartRef.setValue(cartItem)
-            .addOnSuccessListener {
-                Log.d("CartAdapter", "CartItem updated successfully in Firebase")
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Failed to update quantity: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun notifyDataSetChangedSafely() {
-        CoroutineScope(Dispatchers.Main).launch {
-            notifyDataSetChanged()
-        }
-    }
-
-    private fun notifyItemChangedSafely(position: Int) {
-        CoroutineScope(Dispatchers.Main).launch {
-            notifyItemChanged(position)
-        }
-    }
-
-    private fun hexStringToByteArray(hex: String): ByteArray {
-        val result = ByteArray(hex.length / 2)
-        for (i in hex.indices step 2) {
-            result[i / 2] = hex.substring(i, i + 2).toInt(16).toByte()
-        }
-        return result
-    }
 }
+

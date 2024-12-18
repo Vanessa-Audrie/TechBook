@@ -91,52 +91,23 @@ class SearchResultActivity : AppCompatActivity() {
         }
     }
 
+    private var originalSearchResults = mutableListOf<BookResponse>()
+
     private fun performSearch(query: String) {
         progressBar = findViewById(R.id.progressBar2)
-
         showLoading(true)
+        searchResults.clear()
+        searchCache.clear()
+        adapter.notifyDataSetChanged()
         if (query.isEmpty()) {
             Toast.makeText(this, "Search query is empty", Toast.LENGTH_SHORT).show()
+            showLoading(false)
             return
         }
-
-        if (searchCache.containsKey(query)) {
-            searchResults.clear()
-            searchResults.addAll(searchCache[query]!!)
-            adapter.notifyDataSetChanged()
-            return
-        }
-
         val formattedQuery = query.trim()
         var queryRef = database.orderByChild("keyword")
             .startAt(formattedQuery)
             .endAt("$formattedQuery\uf8ff")
-
-        selectedPriceRange?.let { range ->
-            queryRef = queryRef.orderByChild("price").startAt(range.first.toDouble()).endAt(range.second.toDouble())
-        }
-
-        selectedGenre?.let { genre ->
-            queryRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val filteredResults = mutableListOf<BookResponse>()
-
-                    for (dataSnapshot in snapshot.children) {
-                        val book = dataSnapshot.getValue(BookResponse::class.java)
-                        if (book != null && book.genre?.contains(genre, ignoreCase = true) == true) {
-                            filteredResults.add(book)
-                        }
-                    }
-                    searchResults.clear()
-                    searchResults.addAll(filteredResults)
-                    adapter.notifyDataSetChanged()
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@SearchResultActivity, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
 
         queryRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -149,8 +120,8 @@ class SearchResultActivity : AppCompatActivity() {
                     }
                 }
                 searchCache[formattedQuery] = searchResults.toList()
+                originalSearchResults = searchResults.toMutableList()
                 adapter.notifyDataSetChanged()
-                lastVisibleKey = snapshot.children.lastOrNull()?.key
 
                 if (searchResults.isEmpty()) {
                     Toast.makeText(this@SearchResultActivity, "No results found", Toast.LENGTH_SHORT).show()
@@ -159,6 +130,7 @@ class SearchResultActivity : AppCompatActivity() {
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(this@SearchResultActivity, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                showLoading(false)
             }
         })
     }
@@ -193,7 +165,6 @@ class SearchResultActivity : AppCompatActivity() {
         val radioButton5 = popupView.findViewById<RadioButton>(R.id.checkBox12)
 
         selectedGenre?.let { genreDropdown.setText(it, false) }
-
         when (selectedPriceRange) {
             0 to 50000 -> priceRadioGroup.check(R.id.RB_price1)
             50000 to 150000 -> priceRadioGroup.check(R.id.RB_price2)
@@ -216,6 +187,9 @@ class SearchResultActivity : AppCompatActivity() {
             radioButton3.isChecked = false
             radioButton4.isChecked = false
             radioButton5.isChecked = false
+            searchResults.clear()
+            searchResults.addAll(originalSearchResults)
+            adapter.notifyDataSetChanged()
         }
 
         applyButton.setOnClickListener {
@@ -243,10 +217,8 @@ class SearchResultActivity : AppCompatActivity() {
         popupWindow.showAtLocation(findViewById(R.id.imageView27), Gravity.CENTER, 0, 0)
     }
 
-
     private fun applyFilters() {
-        searchResults.clear()
-        val filteredBooks = searchCache.values.flatten().filter { book ->
+        val filteredBooks = originalSearchResults.filter { book ->
             val matchesPrice = selectedPriceRange?.let { range ->
                 val price = book.price?.toIntOrNull()
                 price in range.first..range.second
@@ -258,38 +230,40 @@ class SearchResultActivity : AppCompatActivity() {
 
             matchesPrice && matchesGenre
         }
-        if (selectedRatings.isEmpty()) {
-            searchResults.addAll(filteredBooks)
-            adapter.notifyDataSetChanged()
-            return
-        }
-        val booksWithRatings = mutableListOf<BookResponse>()
-        var remainingRequests = filteredBooks.size
-        if (remainingRequests == 0) {
-            adapter.notifyDataSetChanged()
-            return
-        }
-        for (book in filteredBooks) {
-            book.isbn?.let { isbn ->
-                getAverageRating(isbn) { averageRating ->
-                    if (selectedRatings.contains(averageRating)) {
-                        booksWithRatings.add(book)
+
+        if (selectedRatings.isNotEmpty()) {
+            val booksWithRatings = mutableListOf<BookResponse>()
+            var remainingRequests = filteredBooks.size
+
+            for (book in filteredBooks) {
+                book.isbn?.let { isbn ->
+                    getAverageRating(isbn) { averageRating ->
+                        if (selectedRatings.contains(averageRating)) {
+                            booksWithRatings.add(book)
+                        }
+                        remainingRequests--
+                        if (remainingRequests == 0) {
+                            searchResults.clear()
+                            searchResults.addAll(booksWithRatings)
+                            adapter.notifyDataSetChanged()
+                        }
                     }
+                } ?: run {
                     remainingRequests--
                     if (remainingRequests == 0) {
+                        searchResults.clear()
                         searchResults.addAll(booksWithRatings)
                         adapter.notifyDataSetChanged()
                     }
                 }
-            } ?: run {
-                remainingRequests--
-                if (remainingRequests == 0) {
-                    searchResults.addAll(booksWithRatings)
-                    adapter.notifyDataSetChanged()
-                }
             }
+        } else {
+            searchResults.clear()
+            searchResults.addAll(filteredBooks)
+            adapter.notifyDataSetChanged()
         }
     }
+
 
 
     private fun getAverageRating(isbn: String, callback: (Int) -> Unit) {
