@@ -25,7 +25,7 @@
 ## Tech Stack
 - **Bahasa Pemrograman**: Kotlin
 - **IDE**: Android Studio
-- **Database**: Firebase
+- **Database**: Firebase & SQLite
 - **Backend**: Firebase
 
 ## Pembagian Tugas
