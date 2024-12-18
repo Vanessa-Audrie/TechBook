@@ -179,7 +179,8 @@
             android:hint="Select City"
             android:textSize="14sp"
             android:padding="12dp"
-            android:textColor="@android:color/black"
+            android:textColor="@color/gray"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/textView28"
             app:layout_constraintTop_toBottomOf="@id/textView28" />
     </com.google.android.material.textfield.TextInputLayout>
