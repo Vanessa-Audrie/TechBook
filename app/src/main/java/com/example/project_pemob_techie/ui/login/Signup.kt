@@ -9,8 +9,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.ActivitySignupBinding
-import com.example.project_pemob_techie.ui.login.Login
-import com.example.project_pemob_techie.ui.login.LoginSignup
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -68,7 +66,6 @@ class Signup : AppCompatActivity() {
         val datePickerDialog = DatePickerDialog(
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
-                // Update the birthday EditText with the selected date
                 val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
                 binding.birthdayInput.setText(formattedDate)
             },
@@ -88,8 +85,8 @@ class Signup : AppCompatActivity() {
             Toast.makeText(this, "Invalid email.", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (phone.length < 10) {
-            Toast.makeText(this, "Phone number must be at least 10 digits", Toast.LENGTH_SHORT).show()
+        if (phone.length < 10 || !phone.startsWith("62")) {
+            Toast.makeText(this, "Phone number must be at least 10 digits and start with '62'", Toast.LENGTH_SHORT).show()
             return false
         }
         return true

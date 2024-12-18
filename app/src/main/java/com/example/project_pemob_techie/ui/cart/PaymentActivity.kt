@@ -1,7 +1,6 @@
 package com.example.project_pemob_techie.ui.cart
 
 import android.content.Intent
-import android.media.Image
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView

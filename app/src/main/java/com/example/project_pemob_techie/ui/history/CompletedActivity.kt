@@ -70,8 +70,6 @@ class CompletedActivity : AppCompatActivity() {
         checkReviewStatus(userId!!, transactionId!!)
     }
 
-
-
     private fun fetchTransactionDetails(transactionId: String) {
         val transactionDetailsRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("7/transaction_details/$transactionId")

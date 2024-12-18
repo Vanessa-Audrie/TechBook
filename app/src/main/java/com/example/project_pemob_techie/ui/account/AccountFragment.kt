@@ -14,7 +14,6 @@ import com.example.project_pemob_techie.ui.login.Login
 import com.example.project_pemob_techie.ui.login.VerifyEmail_ChangePW
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import java.net.URL
 
 class AccountFragment : Fragment() {
 
@@ -31,6 +30,29 @@ class AccountFragment : Fragment() {
         val root: View = binding.root
         database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("techbook_techie/")
 
+        binding.imageView31.setOnClickListener {
+            val intent = Intent(requireContext(), EditProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.button10.setOnClickListener {
+            val intent = Intent(requireContext(), VerifyEmail_ChangePW::class.java)
+            startActivity(intent)
+        }
+
+        binding.button9.setOnClickListener {
+            logoutUser()
+        }
+
+        return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadUserData()
+    }
+
+    private fun loadUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             database.child("user").child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
@@ -42,7 +64,7 @@ class AccountFragment : Fragment() {
                         val phone = snapshot.child("phone").value.toString()
                         val birthday = snapshot.child("birthday").value.toString()
                         val language = "English"
-                        val profileImageBase64 = snapshot.child("profileImageUrl").value.toString()  // Base64 string
+                        val profileImageBase64 = snapshot.child("profileImageUrl").value.toString()
 
                         binding.textView61.text = name
                         binding.textView65.text = username
@@ -69,8 +91,6 @@ class AccountFragment : Fragment() {
                     }
                 }
 
-
-
                 override fun onCancelled(error: DatabaseError) {
                     Toast.makeText(requireContext(), "Error: ${error.message}", Toast.LENGTH_SHORT).show()
                 }
@@ -78,22 +98,6 @@ class AccountFragment : Fragment() {
         } else {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
         }
-
-        binding.imageView31.setOnClickListener {
-            val intent = Intent(requireContext(), EditProfileActivity::class.java)
-            startActivity(intent)
-        }
-
-        binding.button10.setOnClickListener {
-            val intent = Intent(requireContext(), VerifyEmail_ChangePW::class.java)
-            startActivity(intent)
-        }
-
-        binding.button9.setOnClickListener {
-            logoutUser()
-        }
-
-        return root
     }
 
     private fun logoutUser() {

@@ -9,14 +9,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.ui.account.SessionManager
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
-import com.google.common.reflect.TypeToken
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.Gson
-import kotlinx.coroutines.launch
 
 class CheckoutActivity : AppCompatActivity() {
 
@@ -67,7 +63,7 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     private fun validateInput(name: String, phoneNumber: String, streetAddress: String, city: String, postalCode: String): Boolean {
-        return name.isNotEmpty() && phoneNumber.isNotEmpty() && streetAddress.isNotEmpty() && city.isNotEmpty() && postalCode.isNotEmpty()
+        return name.isNotEmpty() && phoneNumber.isNotEmpty() && phoneNumber.startsWith("62") && streetAddress.isNotEmpty() && city.isNotEmpty() && postalCode.isNotEmpty()
     }
 
     private fun saveShippingDetailsToFirebase(name: String, phoneNumber: String, streetAddress: String, city: String, postalCode: String) {

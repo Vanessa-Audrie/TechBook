@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project_pemob_techie.databinding.ActivityInsertRatingBinding
 import com.google.firebase.database.*
-import java.util.*
 
 data class ReviewItem(
     val isbn: String,
