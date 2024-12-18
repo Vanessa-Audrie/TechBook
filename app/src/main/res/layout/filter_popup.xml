@@ -15,30 +15,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/textView62"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:text="Filter"
-        android:fontFamily="@font/montserrat_extra_bold"
-        android:textSize="40sp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/textView62"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:fontFamily="@font/montserrat_extra_bold"
+                android:text="Filter"
+                android:textColor="@color/black"
+                android:textSize="40sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView63"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Price"
-        android:fontFamily="@font/montserrat_bold"
-        android:textSize="30sp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="@+id/textView62"
-        app:layout_constraintTop_toBottomOf="@+id/textView62" />
+            <TextView
+                android:id="@+id/textView63"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Price"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView62" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/priceSection"
@@ -259,14 +260,16 @@
 
             <Button
                 android:id="@+id/button9"
+                style="@style/RoundedButton"
                 android:layout_width="320dp"
                 android:layout_height="60dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginBottom="50dp"
                 android:text="Reset Filter"
                 android:textAllCaps="false"
-                style="@style/RoundedButton"
-                android:textSize="15sp"
                 android:textColor="@android:color/white"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/button8" />

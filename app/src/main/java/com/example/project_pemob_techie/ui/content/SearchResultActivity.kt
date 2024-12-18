@@ -151,6 +151,8 @@ class SearchResultActivity : AppCompatActivity() {
             true
         )
 
+        popupWindow.animationStyle = R.style.PopupAnimation
+
         val genreDropdown = popupView.findViewById<MaterialAutoCompleteTextView>(R.id.materialAutoCompleteTextView)
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, genres)
         genreDropdown.setAdapter(adapter)
@@ -214,7 +216,7 @@ class SearchResultActivity : AppCompatActivity() {
             popupWindow.dismiss()
         }
 
-        popupWindow.showAtLocation(findViewById(R.id.imageView27), Gravity.CENTER, 0, 0)
+        popupWindow.showAtLocation(findViewById(R.id.imageView27), Gravity.BOTTOM, 0, 0)
     }
 
     private fun applyFilters() {

@@ -4,26 +4,15 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
         <item name="colorPrimary">@color/yellow</item>
-        <item name="colorPrimaryVariant">@color/yellow</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-    </style>
-
-    <style name="Theme.Project_Pemob_Techie.Splash" parent="Theme.AppCompat.Light.NoActionBar">
-<!--        <item name="android:windowBackground">@color/yellow</item>-->
-<!--        <item name="android:windowFullscreen">true</item>-->
-<!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
+        <item name="colorOnPrimary">@color/white</item>
     </style>
 
     <style name="Theme.Project_Pemob_Techie.Login" parent="Theme.AppCompat.Light.NoActionBar">
-<!--        <item name="android:windowBackground">@color/yellow</item>-->
-<!--        <item name="android:windowFullscreen">true</item>-->
-<!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
-    </style>
-
-    <style name="Theme.Project_Pemob_Techie.FullScreen" parent="Theme.AppCompat.Light.NoActionBar">
-<!--        <item name="android:windowFullscreen">false</item>-->
-<!--        <item name="android:windowTranslucentStatus">true</item>-->
+        <item name="android:windowBackground">@color/yellow</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="TabLayoutTextStyle" parent="TextAppearance.Design.Tab">
@@ -62,4 +51,10 @@
         <item name="android:background">@drawable/add_to_cart_button</item>
         <item name="android:padding">5dp</item>
     </style>
+
+    <style name="PopupAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/popup</item>
+        <item name="android:windowExitAnimation">@anim/popup_exit</item>
+    </style>
+
 </resources>
