@@ -27,23 +27,26 @@
         app:layout_constraintStart_toEndOf="@+id/checkBox4"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
+
     <TextView
         android:id="@+id/textView20"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
         android:fontFamily="@font/montserrat_medium"
+        android:lineSpacingExtra="4dp"
+        android:maxLines="2"
+        android:scrollHorizontally="false"
+        android:singleLine="false"
         android:text="Title"
         android:textColor="@color/black"
         android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView9"
-        app:layout_constraintTop_toTopOf="parent"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:lineSpacingExtra="4dp"
-        android:scrollHorizontally="false"
-        android:singleLine="false"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
@@ -61,9 +64,11 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="160dp"
         android:layout_height="50dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView21">
 
         <ImageView
             android:id="@+id/imageView10"

@@ -15,7 +15,7 @@
       </SelectionState>
       <SelectionState runConfigName="LoginSignup">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-11T12:49:16.525365300Z">
+        <DropdownSelection timestamp="2024-12-18T04:00:25.256970300Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Vanesa\.android\avd\Pixel_7_API_35.avd" />
