@@ -41,7 +41,8 @@ class GenreChoosedActivity : AppCompatActivity() {
 
         genre = intent.getStringExtra("GENRE")?.lowercase() ?: ""
 
-        title.text = genre.replaceFirstChar { it.uppercase() } + genre.drop(1).lowercase()
+        title.text = genre.replaceFirstChar { it.uppercase() }
+
         recyclerView = findViewById(R.id.recyclerViewBooks)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 

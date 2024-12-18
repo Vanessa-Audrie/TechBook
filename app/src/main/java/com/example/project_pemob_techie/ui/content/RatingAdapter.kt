@@ -42,7 +42,6 @@ class RatingAdapter(
             "https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/"
         ).getReference("techbook_techie/user")
 
-
         fun bind(review: Review) {
             ratingBar.rating = review.rating.toFloat()
             ratingBar.isEnabled = false
