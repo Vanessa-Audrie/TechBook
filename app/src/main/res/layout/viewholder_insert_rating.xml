@@ -25,6 +25,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:numStars="5"
+        android:progressTint="#FCBD03"
         android:stepSize="1.0"
         app:layout_constraintStart_toStartOf="@id/tvReviewTitle"
         app:layout_constraintTop_toBottomOf="@id/tvReviewTitle" />
@@ -35,6 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="16dp"
+        android:backgroundTint="#FCBD03"
         android:fontFamily="@font/montserrat_medium"
         android:hint="Type your review here..."
         android:padding="8dp"

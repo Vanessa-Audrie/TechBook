@@ -78,7 +78,8 @@
         <activity android:name=".ui.cart.PaymentDone" />
         <activity android:name=".ui.history.OngoingActivity"/>
         <activity android:name=".ui.history.CompletedActivity" />
-        <activity android:name=".ui.history.RatingReviewActivity" />
+        <activity android:name=".ui.history.RatingReviewActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".ui.content.RatingReviewsActivity"/>
 
 
