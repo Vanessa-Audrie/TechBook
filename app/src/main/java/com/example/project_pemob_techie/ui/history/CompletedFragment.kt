@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.FragmentCompletedBinding
 import com.google.firebase.database.*
 
@@ -34,8 +35,9 @@ class CompletedFragment : Fragment() {
         }
 
         setupRecyclerView()
+        
 
-        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("6/transaction/$userId")
 
         fetchCompletedTransactions(databaseRef)

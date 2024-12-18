@@ -43,7 +43,9 @@ class RatingReviewsActivity : AppCompatActivity() {
     }
 
     private fun fetchRatingsAndReviews(isbn: String) {
-        val database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+
+        val database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("5/rating_reviews/$isbn")
 
         database.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -64,7 +66,7 @@ class RatingReviewsActivity : AppCompatActivity() {
                         totalReviews++
 
                         if (!userNames.containsKey(userId)) {
-                            FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                            FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
                                 .getReference("techbook_techie/user/$userId")
                                 .get()
                                 .addOnSuccessListener { userSnapshot ->

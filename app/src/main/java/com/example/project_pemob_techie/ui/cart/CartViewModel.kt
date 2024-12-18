@@ -10,7 +10,7 @@ import com.google.firebase.database.ValueEventListener
 
 
 class CartViewModel : ViewModel() {
-    private val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    private val cartRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
         .getReference("3/cart/userId/")
     private val _cartItems = MutableLiveData<List<CartItem>>()
     val cartItems: LiveData<List<CartItem>> get() = _cartItems

@@ -40,8 +40,9 @@ class EditProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_profile)
+        
 
-        database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("techbook_techie/")
 
         emailTextView = findViewById(R.id.textView107)
@@ -78,6 +79,7 @@ class EditProfileActivity : AppCompatActivity() {
     private fun fetchUserData() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
+
             val userRef = database.child("user").child(userId)
             userRef.get().addOnSuccessListener { snapshot ->
                 if (snapshot.exists()) {

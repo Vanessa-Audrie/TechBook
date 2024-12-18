@@ -47,7 +47,9 @@ class Shipping : AppCompatActivity() {
     }
 
     private fun fetchShippingFee(city: String, shippingFeeTextView: TextView) {
-        val shippingFeeRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+
+        val shippingFeeRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("11/shipping_fee/$city")
 
         shippingFeeRef.addListenerForSingleValueEvent(object : ValueEventListener {

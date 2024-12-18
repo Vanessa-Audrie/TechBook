@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.FragmentOngoingBinding
 import com.google.firebase.database.*
 
@@ -34,8 +35,9 @@ class OngoingFragment : Fragment() {
         }
 
         setupRecyclerView()
+        
 
-        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("6/transaction/$userId")
 
         fetchTransactionIds(databaseRef)
@@ -45,7 +47,8 @@ class OngoingFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("6/transaction/$userId")
 
         fetchTransactionIds(databaseRef)

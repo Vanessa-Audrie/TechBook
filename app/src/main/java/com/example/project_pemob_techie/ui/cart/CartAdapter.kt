@@ -16,6 +16,7 @@ import com.example.project_pemob_techie.ui.account.SessionManager
 import com.example.project_pemob_techie.ui.cart.CartItem
 import com.example.project_pemob_techie.ui.cart.SQLiteHelper
 import com.google.firebase.database.FirebaseDatabase
+import com.mysql.jdbc.Messages.getString
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -175,7 +176,7 @@ class CartAdapter(
 
     private fun removeItemFromCart(cartItem: CartItem, position: Int) {
         if (position in cartItems.indices) {
-            val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            val cartRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("3/cart/userId/$userId/${cartItem.isbn}")
 
             cartRef.removeValue()
@@ -191,7 +192,7 @@ class CartAdapter(
     }
 
     private fun updateCartInDatabase(cartItem: CartItem) {
-        val cartRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val cartRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("3/cart/userId/$userId/${cartItem.isbn}")
 
         cartRef.setValue(cartItem)

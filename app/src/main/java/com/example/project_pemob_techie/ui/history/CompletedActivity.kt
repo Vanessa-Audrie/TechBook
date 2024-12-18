@@ -71,7 +71,8 @@ class CompletedActivity : AppCompatActivity() {
     }
 
     private fun fetchTransactionDetails(transactionId: String) {
-        val transactionDetailsRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val transactionDetailsRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("7/transaction_details/$transactionId")
 
         transactionDetailsRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -108,7 +109,8 @@ class CompletedActivity : AppCompatActivity() {
     }
 
     private fun fetchTransactionSummary(transactionId: String) {
-        val transactionRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val transactionRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("6/transaction/$userId/$transactionId")
 
         transactionRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -136,7 +138,8 @@ class CompletedActivity : AppCompatActivity() {
     }
 
     private fun checkReviewStatus(userId: String, transactionId: String) {
-        val reviewRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val reviewRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("5/rating_reviews")
         reviewRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

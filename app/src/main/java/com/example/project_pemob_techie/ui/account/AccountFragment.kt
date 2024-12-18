@@ -28,7 +28,9 @@ class AccountFragment : Fragment() {
     ): View {
         _binding = FragmentAccountBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("techbook_techie/")
+        
+
+        database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("techbook_techie/")
 
         binding.imageView31.setOnClickListener {
             val intent = Intent(requireContext(), EditProfileActivity::class.java)

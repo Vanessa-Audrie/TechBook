@@ -80,7 +80,8 @@ class GenreChoosedActivity : AppCompatActivity() {
 
     private fun loadBooksByGenre() {
         showLoading(true)
-        booksRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        booksRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("2/data/")
 
         var query: Query = booksRef.orderByKey().limitToFirst(70)

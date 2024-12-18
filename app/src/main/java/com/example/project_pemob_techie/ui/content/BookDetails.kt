@@ -103,9 +103,10 @@ class BookDetails : AppCompatActivity() {
                 2 -> tab.text = "Rating & Review"
             }
         }.attach()
+        
 
         val database =
-            FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("9/")
         val wishlistRef = database.child("wishlist").child("userId")
         val itemId = bookISBN ?: ""
@@ -183,7 +184,7 @@ class BookDetails : AppCompatActivity() {
         }
 
         val databasecart =
-            FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
                 .getReference("3/")
         val cartRef = databasecart.child("cart").child("userId")
         val cartitemId = bookISBN ?: ""
@@ -236,7 +237,8 @@ class BookDetails : AppCompatActivity() {
     }
 
     private fun fetchPurchaseCount(isbn: String, purchaseCountTextView: TextView) {
-        val database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("7/transaction_details")
 
         var totalQuantity = 0

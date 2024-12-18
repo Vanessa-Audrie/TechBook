@@ -23,6 +23,9 @@ class WishlistFragment : Fragment(R.layout.fragment_wishlist) {
     private var _binding: FragmentWishlistBinding? = null
     private val binding get() = _binding!!
     private lateinit var userId: String
+    private var wishlistListener: ValueEventListener? = null
+    private var wishlistRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        .getReference("9/wishlist/userId")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,26 +37,28 @@ class WishlistFragment : Fragment(R.layout.fragment_wishlist) {
             Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show()
             return binding.root
         }
-        val root: View = binding.root
-        val cartIcon: ImageView = root.findViewById(R.id.cartWishlist)
 
         userId = SessionManager.getUserId(requireContext()) ?: return binding.root
+        setupUI()
         showLoading(true)
         loadWishlist()
-        cartIcon.setOnClickListener {
-            val intent = Intent(requireContext(), CartActivity::class.java)
-            startActivity(intent)
-        }
 
         return binding.root
     }
 
-    private fun loadWishlist() {
-        val wishlistRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .getReference("9/wishlist/userId/$userId")
+    private fun setupUI() {
+        val cartIcon: ImageView = binding.root.findViewById(R.id.cartWishlist)
+        cartIcon.setOnClickListener {
+            val intent = Intent(requireContext(), CartActivity::class.java)
+            startActivity(intent)
+        }
+    }
 
-        wishlistRef.addValueEventListener(object : ValueEventListener {
+    private fun loadWishlist() {
+        val userWishlistRef = wishlistRef.child(userId)
+        wishlistListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                if (!isAdded || _binding == null) return
                 val wishlistItems = mutableListOf<WishlistItem>()
                 Log.d("WishlistFragment", "Snapshot data: $snapshot")
 
@@ -69,42 +74,28 @@ class WishlistFragment : Fragment(R.layout.fragment_wishlist) {
                     }
                 }
 
-                if (wishlistItems.isEmpty()) {
-                    binding.tvstatus.visibility = View.VISIBLE
-                } else {
-                    binding.tvstatus.visibility = View.GONE
-                }
-
-                Log.d("WishlistFragment", "Wishlist items: $wishlistItems")
-                setupRecyclerView(wishlistItems)
+                updateUI(wishlistItems)
                 showLoading(false)
             }
 
             override fun onCancelled(error: DatabaseError) {
+                if (!isAdded || _binding == null) return
                 showLoading(false)
                 Toast.makeText(context, "Failed to load wishlist: ${error.message}", Toast.LENGTH_SHORT).show()
                 Log.e("WishlistFragment", "Error loading wishlist: ${error.message}")
             }
-        })
-    }
-
-
-
-    private fun removeItemFromWishlist(item: WishlistItem) {
-        val wishlistRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .getReference("9/wishlist/userId/$userId")
-        wishlistRef.orderByChild("title").equalTo(item.bookTitle).limitToFirst(1).get().addOnSuccessListener {
-            for (snapshot in it.children) {
-                snapshot.ref.removeValue().addOnSuccessListener {
-                    Toast.makeText(context, "Item removed from wishlist.", Toast.LENGTH_SHORT).show()
-                    loadWishlist()
-                }.addOnFailureListener { e ->
-                    Toast.makeText(context, "Failed to remove item: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
+        userWishlistRef.addValueEventListener(wishlistListener!!)
     }
 
+    private fun updateUI(wishlistItems: List<WishlistItem>) {
+        if (wishlistItems.isEmpty()) {
+            binding.tvstatus.visibility = View.VISIBLE
+        } else {
+            binding.tvstatus.visibility = View.GONE
+        }
+        setupRecyclerView(wishlistItems)
+    }
 
     private fun setupRecyclerView(wishlistItems: List<WishlistItem>) {
         val recyclerView = binding.recyclerView
@@ -114,13 +105,40 @@ class WishlistFragment : Fragment(R.layout.fragment_wishlist) {
         }
     }
 
+    private fun removeItemFromWishlist(item: WishlistItem) {
+        val userWishlistRef = wishlistRef.child(userId)
+        userWishlistRef.orderByChild("title").equalTo(item.bookTitle).limitToFirst(1).get()
+            .addOnSuccessListener { snapshot ->
+                for (itemSnapshot in snapshot.children) {
+                    itemSnapshot.ref.removeValue()
+                        .addOnSuccessListener {
+                            Toast.makeText(context, "Item removed from wishlist.", Toast.LENGTH_SHORT).show()
+                            loadWishlist()
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(context, "Failed to remove item: ${e.message}", Toast.LENGTH_SHORT).show()
+                            Log.e("WishlistFragment", "Error removing item: ${e.message}")
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "Error finding item to remove: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("WishlistFragment", "Error finding item to remove: ${e.message}")
+            }
+    }
+
     private fun showLoading(isLoading: Boolean) {
+        if (_binding == null) return
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         binding.recyclerView.visibility = if (isLoading) View.GONE else View.VISIBLE
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // Remove Firebase listener to avoid memory leaks
+        wishlistListener?.let {
+            wishlistRef.child(userId).removeEventListener(it)
+        }
         _binding = null
     }
 }

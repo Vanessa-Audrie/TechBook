@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "633956332365",
-    "project_id": "techbook-f7669",
-    "storage_bucket": "techbook-f7669.firebasestorage.app"
+    "project_number": "957707889692",
+    "project_id": "techbook-by-techie",
+    "storage_bucket": "techbook-by-techie.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:633956332365:android:fd97ccdf04d51d938f3d04",
+        "mobilesdk_app_id": "1:957707889692:android:c1142b86758803061dc3d9",
         "android_client_info": {
           "package_name": "com.example.project_pemob_techie"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDZDZ52k_lL4M7Dx0G6d1rS6Z6DOWUTgJw"
+          "current_key": "AIzaSyD0SdmBfI04nqYyWyAFvMcHC-7Jf0Th0GA"
         }
       ],
       "services": {

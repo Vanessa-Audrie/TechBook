@@ -75,7 +75,8 @@ class CheckoutActivity : AppCompatActivity() {
             "city" to city,
             "postalCode" to postalCode
         )
-        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("10/shipping/$userId")
 
         databaseRef.setValue(shippingDetails).addOnSuccessListener {
@@ -93,7 +94,8 @@ class CheckoutActivity : AppCompatActivity() {
         cityDropdown: MaterialAutoCompleteTextView,
         postalCodeEditText: EditText
     ) {
-        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("10/shipping/$userId")
 
         databaseRef.get().addOnSuccessListener { snapshot ->

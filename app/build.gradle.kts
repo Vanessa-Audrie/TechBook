@@ -75,4 +75,10 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
     implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation("com.sun.mail:android-mail:1.6.2")
+    implementation("com.sun.mail:android-activation:1.6.2")
+    implementation("androidx.core:core:1.7.0")
+    implementation("com.itextpdf:html2pdf:5.0.0")
+
+
 }

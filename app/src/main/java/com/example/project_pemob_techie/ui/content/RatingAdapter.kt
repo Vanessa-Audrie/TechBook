@@ -39,7 +39,7 @@ class RatingAdapter(
         private val timestampTextView: TextView = itemView.findViewById(R.id.textView68)
         private val profileImageView: ImageView = itemView.findViewById(R.id.imageView39)
         private val database: DatabaseReference = FirebaseDatabase.getInstance(
-            "https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/"
+            "https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/"
         ).getReference("techbook_techie/user")
 
         fun bind(review: Review) {
@@ -79,12 +79,7 @@ class RatingAdapter(
                     }
                 })
         }
-
-
     }
-
-
-
     data class Review(
         val userId: String,
         val rating: Int,

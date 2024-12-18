@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.project_pemob_techie.R
 import com.example.project_pemob_techie.databinding.ActivityInsertRatingBinding
 import com.google.firebase.database.*
 
@@ -67,7 +68,8 @@ class RatingReviewActivity : AppCompatActivity() {
     }
 
     private fun fetchTransactionDetails() {
-        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("7/transaction_details/$transactionId")
 
         databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -99,7 +101,9 @@ class RatingReviewActivity : AppCompatActivity() {
     }
 
     private fun submitReviews() {
-        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("5/rating_reviews")
 
         val timestamp = System.currentTimeMillis()

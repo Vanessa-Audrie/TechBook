@@ -18,14 +18,12 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.OutputStreamWriter
-import java.net.HttpURLConnection
-import java.net.URL
+import com.itextpdf.html2pdf.HtmlConverter
+import java.io.File
+import java.io.FileOutputStream
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class OngoingActivity : AppCompatActivity() {
@@ -101,8 +99,9 @@ class OngoingActivity : AppCompatActivity() {
             Toast.makeText(this, "Invalid transaction or user ID", Toast.LENGTH_SHORT).show()
             return
         }
+        
 
-        val shippingStatusRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val shippingStatusRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("6/transaction/$userId/$transactionId/shipping_status")
 
         shippingStatusRef.setValue(true).addOnCompleteListener { task ->
@@ -118,7 +117,7 @@ class OngoingActivity : AppCompatActivity() {
                         if (task.isSuccessful) {
                             val idToken = task.result?.token
                             if (idToken != null) {
-                                sendTokenToMake(idToken)
+                                sendInvoiceEmail()
                                 finish()
                             } else {
                                 Toast.makeText(this, "Failed to get ID token", Toast.LENGTH_SHORT).show()
@@ -136,7 +135,9 @@ class OngoingActivity : AppCompatActivity() {
 
 
     private fun fetchTransactionDetails(transactionId: String) {
-        val transactionDetailsRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+
+        val transactionDetailsRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("7/transaction_details/$transactionId")
 
         transactionDetailsRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -173,8 +174,8 @@ class OngoingActivity : AppCompatActivity() {
     }
 
     private fun fetchTransactionSummary(transactionId: String) {
-        val transactionRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .getReference("6/transaction/$userId/$transactionId")
+        
+        val transactionRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("6/transaction/$userId/$transactionId")
 
         transactionRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -222,17 +223,23 @@ class OngoingActivity : AppCompatActivity() {
         })
     }
 
+    private fun sendInvoiceEmail() {
+        if (transactionId == null || userId == null) {
+            Toast.makeText(this, "Invalid transaction or user ID", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-
-    fun sendTokenToMake(idToken: String) {
-        val transactionRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val transactionRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("6/transaction/$userId/$transactionId")
 
         transactionRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                val totalAmount = snapshot.child("totalAmount").getValue(Long::class.java) ?: 0L
+                val shippingFee = snapshot.child("shippingFee").getValue(Long::class.java) ?: 0L
                 val timestamp = snapshot.child("timestamp").getValue(Long::class.java) ?: System.currentTimeMillis()
 
-                val userRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                val formattedDate = formatTimestamp(timestamp)
+                val userRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
                     .getReference("techbook_techie/user/$userId")
 
                 userRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -240,75 +247,119 @@ class OngoingActivity : AppCompatActivity() {
                         val email = userSnapshot.child("email").getValue(String::class.java)
 
                         if (email != null) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                try {
-                                    val url = URL("https://hook.us2.make.com/xyppeeiv1axnd6m7agifqojxh5pxwu36")
-                                    val connection = url.openConnection() as HttpURLConnection
-                                    connection.requestMethod = "POST"
-                                    connection.setRequestProperty("Content-Type", "application/json")
-                                    connection.doOutput = true
+                            val htmlContent = buildInvoiceHtml(transactionId!!,
+                                totalAmount.toString(),
+                                shippingFee.toString(),
+                                itemQuantities,
+                                formattedDate
+                            )
 
-                                    val jsonInputString = """
-                                    {
-                                        "idToken": "$idToken",
-                                        "transactionId": "$transactionId",
-                                        "userId": "$userId",
-                                        "timestamp": "$timestamp",
-                                        "totalAmount": "${binding.tvTotalsValue.text}",
-                                        "shippingFee": "${binding.tvShippingFeeValue.text}",
-                                        "items": ${prepareItemsList()},
-                                        "email": "$email"
-                                    }
-                                """
+                            val pdfFile = createPdfFromHtml(htmlContent)
 
-                                    OutputStreamWriter(connection.outputStream).apply {
-                                        write(jsonInputString)
-                                        flush()
-                                    }
+                            val senderEmail = "techie.techbook@gmail.com"
+                            val appPassword = "gqmp gaun pgxy eggb"
 
-                                    val responseCode = connection.responseCode
-                                    withContext(Dispatchers.Main) {
-                                        if (responseCode == HttpURLConnection.HTTP_OK) {
-                                            Log.d("HTTP Response", "Sent data successfully")
-                                            Toast.makeText(this@OngoingActivity, "Data sent successfully", Toast.LENGTH_SHORT).show()
-                                        } else {
-                                            Log.e("HTTP Response", "Error sending data")
-                                            Toast.makeText(this@OngoingActivity, "Failed to send data", Toast.LENGTH_SHORT).show()
-                                        }
-                                    }
-                                } catch (e: Exception) {
-                                    withContext(Dispatchers.Main) {
-                                        Log.e("NetworkError", e.message ?: "Unknown error")
-                                        Toast.makeText(this@OngoingActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
-                                    }
+                            SendMailTask(
+                                senderEmail = senderEmail,
+                                appPassword = appPassword,
+                                recipientEmail = email,
+                                subject = "This Is Your TechBook Invoice",
+                                htmlContent = htmlContent,
+                                attachmentFile = pdfFile,
+                                onSuccess = {
+                                    Toast.makeText(this@OngoingActivity, "Invoice sent successfully!", Toast.LENGTH_SHORT).show()
+                                },
+                                onFailure = { e ->
+                                    Log.e("EmailError", "Failed to send invoice", e)
+                                    Toast.makeText(this@OngoingActivity, "Failed to send email: ${e.message}", Toast.LENGTH_SHORT).show()
                                 }
-                            }
+                            ).execute()
                         } else {
-                            Toast.makeText(this@OngoingActivity, "Failed to fetch email", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@OngoingActivity, "User email not found", Toast.LENGTH_SHORT).show()
                         }
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        Toast.makeText(this@OngoingActivity, "Failed to fetch user details", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@OngoingActivity, "Failed to fetch user email", Toast.LENGTH_SHORT).show()
                     }
                 })
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@OngoingActivity, "Failed to fetch transaction details", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@OngoingActivity, "Failed to fetch transaction data", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
 
-
-    private fun prepareItemsList(): String {
-        val itemsList = mutableListOf<String>()
-        itemQuantities.forEach { item ->
-            itemsList.add("{\"itemName\": \"${item.itemName}\", \"quantity\": ${item.quantity}, \"price\": ${item.price}}")
-        }
-        return itemsList.joinToString(",")
+    fun formatTimestamp(timestamp: Long): String {
+        val dateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.ENGLISH)
+        val date = Date(timestamp)
+        return dateFormat.format(date)
     }
+
+
+    private fun createPdfFromHtml(htmlContent: String): File {
+        val pdfFile = File(cacheDir, "invoice.pdf")
+
+        try {
+            val pdfOutputStream = FileOutputStream(pdfFile)
+            HtmlConverter.convertToPdf(htmlContent, pdfOutputStream)
+            Log.d("PDF", "PDF Created Successfully at: ${pdfFile.absolutePath}")
+        } catch (e: Exception) {
+            Log.e("PDF", "Error generating PDF", e)
+        }
+
+        return pdfFile
+    }
+
+    private fun buildInvoiceHtml(
+        transactionId: String,
+        totalAmount: String,
+        shippingFee: String,
+        items: List<TransactionItem>,
+        formattedDate: String
+    ): String {
+        fun formatCurrency(amount: String): String {
+            val numberFormat = NumberFormat.getInstance(Locale("id", "ID"))
+            return numberFormat.format(amount.toDouble())
+        }
+
+        val totalPrice = totalAmount.toDouble() - shippingFee.toDouble()
+        val itemsHtml = items.joinToString("") { item ->
+            """
+            <tr>
+                <td>${item.itemName}</td>
+                <td>${item.quantity}</td>
+                <td>Rp${formatCurrency(item.price)}</td>
+            </tr>
+            """
+                }
+                return """
+        <html>
+          <body>
+            <p><b>Transaction ID:</b> $transactionId</p>
+            <p><b>Transaction Date:</b> $formattedDate</p>
+            <p>Here are your order details:</p>
+            
+            <table border="1" cellpadding="5" cellspacing="0">
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+              </tr>
+              $itemsHtml
+            </table>
+            <p><b>Total Price:</b> Rp${formatCurrency(totalPrice.toString())}</p>
+            <p><b>Shipping Fee:</b> Rp${formatCurrency(shippingFee)}</p>
+            <p><b>Total Amount:</b> Rp${formatCurrency(totalAmount)}</p>
+            <p>Thank you for shopping with us!</p>
+            <p>Best regards, TechBook</p>
+          </body>
+        </html>
+        """
+    }
+
 }
 
 data class TransactionItem(

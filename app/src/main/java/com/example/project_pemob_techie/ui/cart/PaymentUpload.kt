@@ -53,8 +53,9 @@ class PaymentUpload : AppCompatActivity() {
         }
 
         transactionId = "TR-" + generateTransactionId()
+        
 
-        databaseReference = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        databaseReference = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("6/transaction/$userId/$transactionId")
 
         uploadButton.setOnClickListener {
@@ -110,16 +111,16 @@ class PaymentUpload : AppCompatActivity() {
             Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
             return
         }
-
-        val shippingRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val shippingRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("10/shipping/$userId")
 
         shippingRef.get().addOnSuccessListener { snapshot ->
             val streetAddress = snapshot.child("streetAddress").getValue(String::class.java) ?: ""
             val city = snapshot.child("city").getValue(String::class.java) ?: ""
             val postalCode = snapshot.child("postalCode").getValue(String::class.java) ?: ""
-
-            val address = "$streetAddress, $city, $postalCode"
+            val place = "North Sumatra"
+            val address = "$streetAddress, $city, $place, $postalCode"
 
             val base64Image = encodeImageToBase64(bitmap!!)
 
@@ -168,7 +169,8 @@ class PaymentUpload : AppCompatActivity() {
     }
 
     private fun clearCartAndSQLite() {
-        val cartReference = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val cartReference = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("3/cart/userId/$userId")
 
         cartReference.get().addOnSuccessListener { dataSnapshot ->
@@ -187,7 +189,9 @@ class PaymentUpload : AppCompatActivity() {
                 }
 
                 if (itemsToMove.isNotEmpty()) {
-                    FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                    
+
+                    FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
                         .getReference("7/transaction_details/$transactionId").setValue(itemsToMove)
                         .addOnCompleteListener {
                             Toast.makeText(this, "Transaction details saved", Toast.LENGTH_SHORT).show()

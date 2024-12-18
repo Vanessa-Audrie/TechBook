@@ -109,7 +109,9 @@ class ConfirmationActivity : AppCompatActivity() {
     private var isMassLoaded = false
 
     private fun loadItemDetailsFromFirebase(selectedItems: List<String>, callback: (Double) -> Unit) {
-        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("3/cart/userId/$userId")
         val updatedItems = mutableListOf<CartItem>()
         val totalItems = selectedItems.size
@@ -177,7 +179,8 @@ class ConfirmationActivity : AppCompatActivity() {
     }
 
     private fun loadShippingDetails() {
-        val databaseRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val databaseRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("10/shipping/$userId")
 
         databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -201,7 +204,8 @@ class ConfirmationActivity : AppCompatActivity() {
     }
 
     private fun loadShippingFee(city: String, totalMass: Double) {
-        val shippingFeeRef = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val shippingFeeRef = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("11/shipping_fee/$city")
         shippingFeeRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

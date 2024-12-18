@@ -66,8 +66,9 @@ class HomeFragment : Fragment() {
 
         adapter = RecAdapter(recommendations)
         recyclerView.adapter = adapter
+        
 
-        database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("2/data/")
 
         database.limitToFirst(2).addValueEventListener(object : ValueEventListener {

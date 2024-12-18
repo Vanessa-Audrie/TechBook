@@ -56,8 +56,8 @@ class SearchResultActivity : AppCompatActivity() {
         recyclerView.layoutManager = GridLayoutManager(this, 2)
         adapter = RecAdapter(searchResults)
         recyclerView.adapter = adapter
-
-        database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("2/data/")
 
         performSearch(query)
@@ -295,7 +295,8 @@ class SearchResultActivity : AppCompatActivity() {
     private fun getAverageRating(isbn: String, callback: (Int) -> Unit) {
         var totalRating = 0
         var reviewCount = 0
-        val database = FirebaseDatabase.getInstance("https://techbook-f7669-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        
+        val database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("5/rating_reviews/$isbn")
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
