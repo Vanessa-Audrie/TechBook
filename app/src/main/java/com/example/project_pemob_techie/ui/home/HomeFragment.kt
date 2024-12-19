@@ -66,7 +66,7 @@ class HomeFragment : Fragment() {
 
         adapter = RecAdapter(recommendations)
         recyclerView.adapter = adapter
-        
+
 
         database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("2/data/")
@@ -131,6 +131,7 @@ class HomeFragment : Fragment() {
             startActivity(intent)
         }
 
+
         searchBar.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val query = v.text.toString().trim()
@@ -146,9 +147,14 @@ class HomeFragment : Fragment() {
             } else {
                 false
             }
+
         }
 
         return root
+    }
+    override fun onResume() {
+        super.onResume()
+        searchBar.setText("")
     }
 
     private fun setupImageCarousel() {

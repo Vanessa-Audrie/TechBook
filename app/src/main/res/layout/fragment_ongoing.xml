@@ -25,6 +25,7 @@
         android:gravity="center"
         android:text="Nothing to show here.\nYou don't have any ongoing orders."
         android:textColor="@color/gray"
+        android:visibility="gone"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
