@@ -13,25 +13,23 @@ import com.example.project_pemob_techie.ui.login.LoginSignup
 
 class SplashScreen : AppCompatActivity() {
 
-    private val SPLASH_TIMEOUT: Long = 1000
+    private val SPLASH_TIMEOUT: Long = 2000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-        // Set padding to respect system bars (status & navigation bars)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // Delay logic to transition to MainActivity
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, LoginSignup::class.java)
             startActivity(intent)
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-            finish() // Ensure SplashScreen is removed from back stack
+            finish()
         }, SPLASH_TIMEOUT)
     }
 }
