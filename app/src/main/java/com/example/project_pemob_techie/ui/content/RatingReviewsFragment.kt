@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -36,6 +37,7 @@ class RatingReviewsFragment : Fragment() {
     private lateinit var adapter: RatingAdapter
     private lateinit var tvReviewStatus: TextView
     private lateinit var button14: TextView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +53,7 @@ class RatingReviewsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         tvReviewStatus = view.findViewById(R.id.tvReviewStatus)
         button14 = view.findViewById(R.id.button14)
+        progressBar = view.findViewById(R.id.progressBar)
 
         val isbn = arguments?.getString(BOOK_ISBN_KEY)
         if (isbn != null) {
@@ -71,13 +74,20 @@ class RatingReviewsFragment : Fragment() {
 
     }
 
+    private fun showLoading(isLoading: Boolean) {
+        progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
 
     private fun fetchRatingsAndReviews(isbn: String) {
+        showLoading(true)
         
         val database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
             .getReference("5/rating_reviews/$isbn")
 
         database.get().addOnCompleteListener { task ->
+            showLoading(false)
+
             if (task.isSuccessful) {
                 val snapshot = task.result
                 if (!snapshot.exists()) {
@@ -133,6 +143,7 @@ class RatingReviewsFragment : Fragment() {
             }
 
             override fun onCancelled(error: DatabaseError) {
+                showLoading(false)
                 Toast.makeText(requireContext(), "Failed to load ratings and reviews", Toast.LENGTH_SHORT).show()
             }
         })

@@ -34,10 +34,11 @@ class SearchResultActivity : AppCompatActivity() {
     private lateinit var progressBar: View
     var lastVisibleKey: String? = null
     private val searchCache = mutableMapOf<String, List<BookResponse>>()
+    private lateinit var textSearchEmpty: TextView
 
     private val genres = listOf(
         "Fantasy", "Action", "Comic", "Self-improvement", "Mystery", "History",
-        "Philosophy", "Biography", "Business",  "Comedy", "Fiction", "Romance",
+        "Philosophy", "Biography", "Business", "Comedy", "Fiction", "Romance",
         "Music", "Children", "Psychology", "Horror", "Spirituality", "Art"
     )
 
@@ -56,9 +57,14 @@ class SearchResultActivity : AppCompatActivity() {
         recyclerView.layoutManager = GridLayoutManager(this, 2)
         adapter = RecAdapter(searchResults)
         recyclerView.adapter = adapter
-        
-        database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .getReference("2/data/")
+
+        textSearchEmpty = findViewById(R.id.textSearchEmpty)
+        progressBar = findViewById(R.id.progressBar2)
+
+
+        database =
+            FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference("2/data/")
 
         performSearch(query)
 
@@ -94,11 +100,11 @@ class SearchResultActivity : AppCompatActivity() {
     private var originalSearchResults = mutableListOf<BookResponse>()
 
     private fun performSearch(query: String) {
-        progressBar = findViewById(R.id.progressBar2)
         showLoading(true)
         searchResults.clear()
         searchCache.clear()
         adapter.notifyDataSetChanged()
+        textSearchEmpty.visibility = View.GONE
         if (query.isEmpty()) {
             Toast.makeText(this, "Search query is empty", Toast.LENGTH_SHORT).show()
             showLoading(false)
@@ -108,7 +114,6 @@ class SearchResultActivity : AppCompatActivity() {
         var queryRef = database.orderByChild("keyword")
             .startAt(formattedQuery)
             .endAt("$formattedQuery\uf8ff")
-
         queryRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 showLoading(false)
@@ -122,14 +127,16 @@ class SearchResultActivity : AppCompatActivity() {
                 searchCache[formattedQuery] = searchResults.toList()
                 originalSearchResults = searchResults.toMutableList()
                 adapter.notifyDataSetChanged()
+                showLoading(false)
 
-                if (searchResults.isEmpty()) {
-                    Toast.makeText(this@SearchResultActivity, "No results found", Toast.LENGTH_SHORT).show()
-                }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@SearchResultActivity, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@SearchResultActivity,
+                    "Error: ${error.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
                 showLoading(false)
             }
         })
@@ -141,6 +148,7 @@ class SearchResultActivity : AppCompatActivity() {
     private var selectedRatings: Set<Int> = emptySet()
 
     private fun showFilterPopup() {
+        progressBar = findViewById(R.id.progressBar2)
         val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val popupView: View = inflater.inflate(R.layout.filter_popup, null)
         val resetButton = popupView.findViewById<Button>(R.id.button9)
@@ -153,7 +161,8 @@ class SearchResultActivity : AppCompatActivity() {
 
         popupWindow.animationStyle = R.style.PopupAnimation
 
-        val genreDropdown = popupView.findViewById<MaterialAutoCompleteTextView>(R.id.materialAutoCompleteTextView)
+        val genreDropdown =
+            popupView.findViewById<MaterialAutoCompleteTextView>(R.id.materialAutoCompleteTextView)
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, genres)
         genreDropdown.setAdapter(adapter)
 
@@ -220,6 +229,8 @@ class SearchResultActivity : AppCompatActivity() {
     }
 
     private fun applyFilters() {
+        showLoading(true) //
+        textSearchEmpty.visibility = View.GONE
         val filteredBooks = originalSearchResults.filter { book ->
             val matchesPrice = selectedPriceRange?.let { range ->
                 val price = book.price?.toIntOrNull()
@@ -248,6 +259,7 @@ class SearchResultActivity : AppCompatActivity() {
                             searchResults.clear()
                             searchResults.addAll(booksWithRatings)
                             adapter.notifyDataSetChanged()
+                            showLoading(false)
                         }
                     }
                 } ?: run {
@@ -256,6 +268,7 @@ class SearchResultActivity : AppCompatActivity() {
                         searchResults.clear()
                         searchResults.addAll(booksWithRatings)
                         adapter.notifyDataSetChanged()
+                        showLoading(false)
                     }
                 }
             }
@@ -263,22 +276,32 @@ class SearchResultActivity : AppCompatActivity() {
             searchResults.clear()
             searchResults.addAll(filteredBooks)
             adapter.notifyDataSetChanged()
+            showLoading(false)
         }
     }
 
+    private fun updateEmptyView() {
+        if (searchResults.isEmpty()) {
+            textSearchEmpty.visibility = View.VISIBLE
+        } else {
+            textSearchEmpty.visibility = View.GONE
+        }
+    }
 
 
     private fun getAverageRating(isbn: String, callback: (Int) -> Unit) {
         var totalRating = 0
         var reviewCount = 0
-        
-        val database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            .getReference("5/rating_reviews/$isbn")
+
+        val database =
+            FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                .getReference("5/rating_reviews/$isbn")
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (userSnapshot in snapshot.children) {
                     for (transactionSnapshot in userSnapshot.children) {
-                        val rating = transactionSnapshot.child("rating").getValue(Int::class.java) ?: 0
+                        val rating =
+                            transactionSnapshot.child("rating").getValue(Int::class.java) ?: 0
                         totalRating += rating
                         reviewCount++
                     }
@@ -290,14 +313,22 @@ class SearchResultActivity : AppCompatActivity() {
                 }
                 callback(averageRating)
             }
+
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@SearchResultActivity, "Failed to fetch rating", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@SearchResultActivity,
+                    "Failed to fetch rating",
+                    Toast.LENGTH_SHORT
+                ).show()
                 callback(0)
             }
         })
     }
 
     private fun showLoading(isLoading: Boolean) {
-        progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            if (!isLoading) {
+                updateEmptyView()
+        }
     }
 }

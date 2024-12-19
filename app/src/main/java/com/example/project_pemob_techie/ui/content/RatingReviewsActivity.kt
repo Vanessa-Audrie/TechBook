@@ -1,7 +1,9 @@
 package com.example.project_pemob_techie.ui.content
 
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +20,7 @@ class RatingReviewsActivity : AppCompatActivity() {
     private lateinit var adapter: RatingAdapter
     private lateinit var averageTextView: TextView
     private lateinit var backButton: ImageView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +29,7 @@ class RatingReviewsActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         averageTextView = findViewById(R.id.textView77)
         backButton = findViewById(R.id.imageView40)
+        progressBar = findViewById(R.id.progressBar)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -43,6 +47,7 @@ class RatingReviewsActivity : AppCompatActivity() {
     }
 
     private fun fetchRatingsAndReviews(isbn: String) {
+        showLoading(true)
         
 
         val database = FirebaseDatabase.getInstance("https://techbook-by-techie-default-rtdb.asia-southeast1.firebasedatabase.app/")
@@ -85,10 +90,12 @@ class RatingReviewsActivity : AppCompatActivity() {
                 if (totalReviews == 0) {
                     updateUI(emptyList(), totalRating, totalReviews)
                 }
+                showLoading(false)
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(this@RatingReviewsActivity, "Failed to load ratings and reviews", Toast.LENGTH_SHORT).show()
+                showLoading(false)
             }
         })
     }
@@ -99,5 +106,9 @@ class RatingReviewsActivity : AppCompatActivity() {
 
         val averageRating = if (totalReviews > 0) totalRating.toFloat() / totalReviews else 0f
         averageTextView.text = String.format(Locale.getDefault(), "%.1f/5.0", averageRating)
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }
