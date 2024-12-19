@@ -13,7 +13,7 @@ import com.example.project_pemob_techie.ui.login.LoginSignup
 
 class SplashScreen : AppCompatActivity() {
 
-    private val SPLASH_TIMEOUT: Long = 3000 // 3 seconds
+    private val SPLASH_TIMEOUT: Long = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

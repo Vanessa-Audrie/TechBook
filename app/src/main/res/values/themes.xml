@@ -9,6 +9,10 @@
         <item name="colorOnPrimary">@color/white</item>
     </style>
 
+    <style name="Theme.Project_Pemob_Techie.Splash" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/yellow</item>
+    </style>
+
     <style name="Theme.Project_Pemob_Techie.Login" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/yellow</item>
         <item name="android:windowFullscreen">true</item>
