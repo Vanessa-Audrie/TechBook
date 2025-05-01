@@ -1,36 +1,44 @@
-# TechBook 📚🛒📱
+# 📚 TechBook — Your Online Bookstore App
 
-## Deskripsi Aplikasi
-**TechBook**  merupakan sebuah aplikasi yang melayani pembelian buku secara online. Aplikasi ini akan memberikan banyak fitur-fitur yang dapat memudahkan pengalaman berbelanja. Pengguna dapat membuat akun melalui fitur pengguna login untuk mengelola profil dan melacak riwayat pembelian. Dengan Keranjang Belanja, pengguna dapat dengan mudah menyimpan barang-barang yang ingin dibeli sebelum melakukan pembayaran (checkout). Fitur Wishlist memungkinkan pengguna menyimpan buku yang ingin dibeli di masa mendatang. Selain itu, ada fitur pencarian item yang memudahkan pengguna untuk menemukan buku berdasarkan judul, penulis, genre, atau kata kunci. Akan ada banyak lagi fitur yang akan pengguna dapatkan pada aplikasi tersebut, yaitu seperti prediksi ongkos kirim, status pengiriman, dll.
+## Description
 
-## Fungsi Aplikasi
-- Memfasilitasi penjualan buku kepada konsumen.
-- Menyediakan fitur pencarian untuk memudahkan pengguna menemukan buku berdasarkan judul, penulis, genre.
-- Memberikan rekomendasi buku yang disesuaikan dengan preferensi dan riwayat pembelian pengguna.
-- Menyediakan informasi detail tentang buku, termasuk sinopsis, dan ulasan dari pembaca lain.
+**TechBook** is a modern mobile application designed to provide a seamless and convenient book-shopping experience. With a wide range of features, users can browse, search, and purchase books directly from their devices. The app supports user account creation and login, allowing users to manage their profiles and track their order history. 
 
-## Fitur-Fitur Aplikasi
-- Login & Registrasi 🔑: Aplikasi menyediakan fitur login dan registration. Pada fitur ini pengguna dapat melakukan login ke aplikasi, tetapi jika belum mempunyai akun maka pengguna harus melakukan registrasi terlebih dahulu.
-- Profil Pengguna 👤: Aplikasi ini menyediakan fitur profile, dimana pengguna dapat melihat informasi pribadi seperti username, no hp, email, tanggal lahir, bahasa, dan tombol logout.
-- Keranjang Belanja 🛒: Aplikasi ini menyediakan fitur keranjang belanja, yang akan berguna untuk memudahkan pengguna menyimpan barang-barang yang ingin dibeli sebelum melakukan pembayaran (checkout).
-- Wishlist ❤️: Aplikasi ini menyediakan fitur wishlist. Fitur ini berfungsi untuk menyimpan daftar barang apa saja yang mungkin akan dibeli oleh pengguna dimasa yang akan datang, dan wishlist barang akan tetap ada selama yang diinginkan pengguna.
-- Checkout Payment 💳: Aplikasi ini menyediakan fitur checkout payment. Fitur ini akan menampilkan total dari belanjaan pengguna, dan selanjutnya pengguna dapat melakukan pembayaran.
-- Prediksi Ongkos Kirim 🚚: Aplikasi ini menyediakan fitur prediksi ongkos kirim. Pada fitur ini akan memberikan prediksi mengenai ongkos kirim sebelum melakukan pembayaran. Pengguna dapat mengetahui ongkos kirim ke tempat tinggal mereka.
-- Riwayat Pesanan 📜: Aplikasi ini menyediakan fitur riwayat pesanan. Fitur ini akan membantu pengguna untuk memberitahu status pengiriman paket dan riwayat pesanan.
-- Pencarian Item 🔍: Aplikasi ini menyediakan fitur pencarian item. Pada fitur ini pengguna dapat mencari sebuah item yang mereka inginkan. Cukup dengan memasukkan kata kunci yang sesuai dengan item yang mereka inginkan, maka item tersebut akan muncul.
-- Filter Item 🎛️: Aplikasi ini menyediakan fitur filter item. Pada fitur filter item ini memungkinkan pengguna untuk memfilter item berdasarkan kriteria tertentu, seperti harga, genre, dan rating, sehingga pengguna dapat dengan mudah menemukan item yang sesuai dengan preferensi dan kebutuhan.
-- Detail Produk 📝: Aplikasi ini menyediakan fitur details item. Fitur ini memberikan informasi yang lebih detail ke pengguna tentang item, yaitu seperti nama penulis, tahun terbit, deskripsi item, dll.
-- Rating & Review ⭐: Aplikasi ini menyediakan rating & review. Pada fitur ini pengguna dapat memberikan rating dan review mengenai barang yang mereka beli.
+A Shopping Cart makes it easy to collect books before checking out, while the Wishlist lets users save books for future purchases. The Search and Filter functions help users find books by title, author, genre, or keyword. Additional features include shipping cost estimation, order tracking, and more — all designed to enhance the user experience.
+
+## Objectives
+
+- Facilitate the purchase of books through a user-friendly platform.
+- Enable users to search for books based on title, author, or genre.
+- Provide personalized book recommendations based on user preferences and purchase history.
+- Display detailed book information including synopsis and user reviews.
+
+## Key Features
+
+- **User Authentication 🔐**: Secure login and registration functionality. New users must sign up before accessing the app.
+- **User Profile 👤**: Users can view and manage personal details such as username, phone number, email, date of birth, preferred language, and log out from the app.
+- **Shopping Cart 🛒**: Allows users to store books they plan to purchase before proceeding to checkout.
+- **Wishlist ❤️**: Users can save books they’re interested in for future purchases, with the ability to manage their list over time.
+- **Checkout & Payment 💳**: Displays total purchase amount and guides the user through the payment process.
+- **Shipping Cost Estimator 🚚**: Predicts shipping fees based on the user's delivery address prior to payment.
+- **Order History 📜**: Tracks past orders and shows real-time shipment status.
+- **Item Search 🔍**: Enables users to quickly find books by entering relevant keywords.
+- **Advanced Filters 🎛️**: Filter search results by price, genre, rating, and other criteria to easily find desired books.
+- **Product Details 📝**: Provides comprehensive book information including author, publication year, description, etc.
+- **Ratings & Reviews ⭐**: Users can rate and review the books they’ve purchased, helping others make informed decisions.
 
 ## Tech Stack
-- **Bahasa Pemrograman**: Kotlin
-- **IDE**: Android Studio
-- **Database**: Firebase & SQLite
-- **Backend**: Firebase
 
-## Pembagian Tugas
-- **Nur Adilah**: Backend dan Logika
-- **Vanessa**: Frontend
-- **Felicia**: Backend dan Logika
-- **Faiza**: Backend dan Logika
-- **Mubarok**: Frontend
+- **Programming Language**: Kotlin  
+- **IDE**: Android Studio  
+- **Database**: Firebase & SQLite   
+
+## Team & Responsibilities
+
+| Name          | Role             |
+|---------------|------------------|
+| **Nur Adilah** | Backend & Logic  |
+| **Vanessa**    | Frontend         |
+| **Felicia**    | Backend & Logic  |
+| **Faiza**      | Backend & Logic  |
+| **Mubarok**    | Frontend         |
